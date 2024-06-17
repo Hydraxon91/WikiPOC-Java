@@ -1,0 +1,28 @@
+.breadcrumbs {
+    /* margin-left: 1rem; */
+    margin-top: 2rem;
+    font-size: small;
+}
+
+.breadcrumbs ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+}
+
+.breadcrumbs ul li {
+    margin-right: 10px;
+}
+
+.breadcrumbs ul li a {
+    text-decoration: none;
+    color: #024185;
+}
+
+.breadcrumbs ul li a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumbs ul li span {
+    color: #2e3236;
+}

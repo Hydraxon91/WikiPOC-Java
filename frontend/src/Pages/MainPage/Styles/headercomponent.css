@@ -1,0 +1,29 @@
+.top-header {
+    display: flex;
+    height: 10em;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2em;
+    border: 1px solid #0c0c0c; 
+}
+
+.logo-container {
+    width: 100px; /* Adjust width as needed */
+}
+
+.site-logo {
+    max-width: 100%;
+    height: auto;
+}
+
+.title-container {
+    flex-grow: 1; /* Allow the title to grow and occupy remaining space */
+    text-align: center;
+}
+
+.page-title {
+    margin: 0; /* Remove default margin */
+    font-size: 20px; /* Adjust font size as needed */
+    color: #333; /* Text color */
+    /* Add other styles as needed */
+}

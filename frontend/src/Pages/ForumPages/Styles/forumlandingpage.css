@@ -1,0 +1,79 @@
+.forum-mainsection{
+ width: 98%;
+}
+
+.forum-grid {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.grid-header {
+    display: flex;
+    background-color: #f0f0f0; 
+    font-weight: bold;
+}
+
+.header-cell,
+.grid-cell {
+    padding: 10px;
+    border: 1px solid #ccc; 
+    text-align: center; 
+}
+
+.header-cell:nth-child(1) {
+    flex: 6; 
+}
+
+.header-cell:nth-child(2),
+.header-cell:nth-child(3) {
+    flex: 0.75; 
+}
+
+.header-cell:nth-child(4){
+    flex: 2.5;
+}
+
+.grid-row {
+    display: flex;
+}
+
+.grid-cell {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.grid-cell:nth-child(1) {
+    flex: 6; /* First cell takes up 70% of width */
+}
+
+.grid-cell:nth-child(2),
+.grid-cell:nth-child(3) {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+    justify-content: center; /* Horizontally center-align text */
+    flex: 0.75; /* Remaining cells (Topics, Posts, Last Post) take up equal parts of the remaining space */
+}
+
+.grid-cell:nth-child(4) {
+    flex: 2.5; /* Remaining cells (Topics, Posts, Last Post) take up equal parts of the remaining space */
+}
+
+.grid-row {
+    transition: background-color 0.3s ease; 
+}
+
+.grid-row:hover {
+    background-color: #bbbbbb93;
+}
+
+.grid-cell.title{
+    text-align: left;
+}
+
+
+
+

@@ -1,0 +1,85 @@
+.stylepage{
+    margin-left: 2vh;
+    margin-bottom: 1vh;
+}
+
+.font-change select{
+    width: 20%;
+    margin-left: 1vw;
+    height: 2.5vh;
+}
+
+.wikipage-preset-component{
+    height:100%;
+}
+
+.wikipage-preset-card-component{
+	display: inline-block;
+    padding: 1.25em 1.5em 1.5em 1.5em;
+    min-width: 45%;
+    height: 20em;
+    border: 1px solid #c8ccd1;
+    margin: 1vh;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wikipage-preset-card-component:hover{
+	transform: scale(1.05);
+	box-shadow: 0 0 10px rgb(0, 0, 0);
+	cursor: pointer;
+}
+
+.article-right-preset {
+	border: 1px solid #c8ccd1;
+	padding: 3px;
+	float: right;
+    margin-top: auto;
+	font-size: 94%;
+	text-align: center;
+	overflow: hidden;
+	line-height: 1.4em;
+	padding: 3px;
+	font-size: 94%;
+	margin: 0 0 5px 15px;
+	text-align: left;
+	margin-bottom:1vh;
+	max-width: 200px;
+}
+
+.article-right-inner-preset {
+	border: 1px solid #c8ccd1;
+	padding: 3px;
+	font-size: 94%;
+	text-align: center;
+	overflow: hidden;
+}
+
+.pagefooter-template {
+	padding: 1.5em 1.3em 2em;
+	font-size: 75%;
+	line-height: 2em;
+}
+
+.edit_logo{
+	display: flex;
+	margin-bottom: 1vh;
+	
+}
+
+.edit_logo input{
+	display: inline-block;
+	vertical-align: middle;
+	margin-left: 0.5rem;
+	margin-top: auto;
+	margin-bottom: auto;
+	height: 2em;
+    width: 20em;
+    padding-left: 0.5em;
+	padding-top: 0.1em;
+    color: rgb(0, 0, 0);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.1em;
+    background-color: #ffffffc0;
+    border-radius: 5px;
+    border: 2px solid rgba(118, 118, 118, 0.5);
+}

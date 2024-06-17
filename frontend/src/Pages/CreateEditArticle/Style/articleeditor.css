@@ -1,0 +1,191 @@
+.editor-container{
+  display: flex;
+  width: 100%;
+}
+
+.articleeditor-container{
+  flex: 1;
+  margin-right: 10px;
+  width: 50%;
+}
+
+.preview-container{
+  flex: 1;
+  margin-left: 10px;
+  width: 50%;
+}
+
+
+.custom-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .custom-popup {
+    max-width: 40%;
+    min-height: 24.5%;
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    overflow-y: scroll;
+  }
+  
+  .custom-popup label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .custom-popup input,
+  .custom-popup textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical; /* Allow vertical resizing */
+    overflow-y: auto; /* Enable vertical scrollbar if needed */
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+    max-height: 200px; /* Limit the height to avoid excessive expansion */
+  }
+
+  .custom-popup .ql-editor {
+    max-width: 100%;
+    overflow-wrap: break-word;
+  }
+  
+  .custom-popup .confirm-button-container{
+    display: flex;
+    /* justify-content: center; 
+    align-items: center; */
+  }
+
+  .custom-popup .confirm-button {
+    margin: auto;
+    margin-top: 10px;
+    padding: 8px 15px;
+    /* margin-right: 10px; */
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+  }
+
+  .confirm-button.left{
+    margin-right: 5px;
+  }
+   .confirm-button.right{
+    margin-left: 5px;
+  }
+
+  .custom-popup .confirm-button:hover {
+    filter: brightness(85%);
+  }
+  
+  .quill.image-url-text-input .ql-editor{
+    /* display: none; */
+    overflow-y: scroll;
+    height: 50px;
+    width: 100%;
+  }
+
+  .editor-image-container {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    max-height: 15rem;
+    overflow-y: scroll;
+  }
+
+.editor-image-container::-webkit-scrollbar {
+  width: 8px; 
+}
+
+.editor-image-container::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+
+.editor-image-container::-webkit-scrollbar-thumb {
+  background: #888; 
+  border-radius: 4px; 
+}
+
+.image-preview div {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90%;
+}
+
+.image-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 10rem;
+  height: 10rem;
+  margin: 0 auto;
+  margin-left: 10%;
+}
+
+.image-preview img {
+  max-width: 100%; 
+  max-height: 8rem;
+  padding-bottom: 1rem;
+}
+
+.image-preview div {
+  max-width: 90%; 
+  max-height: 8rem;
+  padding-bottom: 1rem;
+}
+
+.image-preview:hover{
+  transform: scale(1.05);
+	box-shadow: 0 0 10px rgb(0, 0, 0);
+	cursor: pointer;
+}
+
+input {
+  margin-left: 5px;
+}
+
+.custom-file-upload{
+  width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+.custom-file-upload + label{
+  margin-left: 0.1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.2rem;
+  background-color: rgb(255, 255, 255);
+  display: inline-block;
+  padding-block: 1px;
+  padding-inline: 6px;
+  border-width: 2px;
+  border-style: outset;
+  border-color: buttonborder;
+  border-image: initial;
+  cursor: pointer;
+}
+
+.quill{
+  margin-top: 0.5rem;
+}
+
+.quill .ql-editor{
+  background-color: rgb(224, 224, 224);
+}

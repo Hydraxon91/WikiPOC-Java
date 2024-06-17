@@ -1,0 +1,61 @@
+.thumbnail {
+    border: 1px solid #c8ccd1;
+    padding: 3px;
+    background-color: #3c5fb8;
+    font-size: 94%;
+    text-align: center;
+    overflow: hidden;
+    line-height: 1.4em;
+    padding: 3px;
+    font-size: 94%;
+    margin-bottom: 2vh;
+    width: 200px;
+    /* text-align: left; */
+}
+
+.thumbnail.right {
+    float: right;
+    margin-left: 15px;
+}
+
+.thumbnail.left {
+    float: left;
+    margin-right: 15px;
+}
+
+.thumbnail.mid {
+    margin: 0 auto 5px auto;
+}
+
+.thumbnail.freeflow {
+    display: block;
+    float: left;
+    margin: 0 5px 5px 5px;
+}
+
+.thumbnail-inner {
+	border: 1px solid #c8ccd1;
+	padding: 3px;
+	background-color: #2b4ea6;
+	font-size: 94%;
+	text-align: center;
+	overflow: hidden;
+}
+
+.paragraph-image{
+    max-width: 11em;
+    max-height: 11em;
+    width: auto;
+    height: auto;
+}
+
+.article-preview {
+    display: block;
+    margin: 0 auto;
+    text-align: center; /* optional: to center the text inside the label */
+}
+
+.wikipage-content-container{
+    white-space: normal;
+    word-wrap: break-word;
+}

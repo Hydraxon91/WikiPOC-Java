@@ -1,0 +1,69 @@
+.reply-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.5em;
+}
+
+.reply-comment-write-container {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1em;
+}
+
+.reply-profile-pic {
+    margin-right: 0.6em;
+    border-radius: 50%;
+}
+
+.reply-comment-profilepic img {
+    width: 2em;
+    height: 2em;
+    border: 0.0625em solid black; /* 1px to em */
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+.reply-comment-write-textarea {
+    flex-grow: 1;
+    height: fit-content;
+    min-height: 2em;
+    max-height: 10rem;
+}
+
+.reply-comment-write-textarea textarea {
+    width: 100%;
+    height: 2.5em;
+    border: none;
+    border-bottom: 0.0625em solid #757575; /* 1px to em */
+    padding: 0.625em; /* 10px to em */
+    font-size: 0.875em; /* 14px to em */
+    resize: none;
+    background-color: transparent;
+    margin-bottom: auto;
+    overflow: hidden;
+    min-height: 2em;
+    max-height: 10rem;
+    box-sizing: border-box;
+}
+
+.reply-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.625em; /* 10px to em */
+}
+
+.reply-button {
+    border: none;
+    background-color: transparent;
+    font-size: 0.875em; /* 14px to em */
+    cursor: pointer;
+}
+
+.reply-button.cancel {
+    color: #666;
+}
+
+.reply-button.send {
+    color: #1a73e8;
+    font-weight: bold;
+}

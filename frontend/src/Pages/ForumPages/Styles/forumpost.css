@@ -1,0 +1,92 @@
+.fp-grid {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    font-size: small;
+    margin-bottom: 1rem;
+}
+
+.fp-grid-header {
+    display: flex;
+    background-color: #f0f0f0; 
+    font-weight: bold;
+}
+
+.fp-header-cell,
+.fp-grid-cell {
+    display: inline;
+    padding: 10px;
+    border: 1px solid #ccc; 
+}
+
+.fp-grid-cell.firstrow{
+    display: flex;
+}
+
+.fp-header-cell:nth-child(1) {
+    flex: 1.5; 
+    text-align: center; 
+}
+
+.fp-header-cell:nth-child(2) {
+    flex: 8.5; 
+}
+
+.fp-grid-row {
+    display: flex;
+}
+
+.fp-grid-cell {
+    padding: 10px;
+    border: 1px solid #ccc;
+    width: 80%;
+}
+
+.fp-grid-cell p {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+}
+
+.fp-grid-cell-left {
+    margin-right: auto;
+}
+
+.fp-grid-cell:nth-child(1) {
+    flex: 1.5; 
+    text-align: center; 
+}
+
+.fp-grid-cell:nth-child(2){
+    flex: 8.5; 
+}
+
+.quote-button {
+    /* background: linear-gradient(to bottom, #e6e6e6 0%, #d1d1d1 100%); */
+    height: 2em;
+    margin-left: 1em;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    font-size: 10px; 
+    font-weight: bold; /* Bold text */
+    padding: 5px 10px; /* Padding */
+    display: flex; /* Flexbox for aligning icon and text */
+    align-items: center; /* Center items vertically */
+  }
+  
+  .quote-button:before {
+    content: '❝'; /* Unicode quote character */
+    font-size: 18px; /* Size of the quote character */
+    margin-right: 5px; /* Space between icon and text */
+    padding-left: 1px;
+    color: #333; /* Color of the quote character */
+  }
+  
+  .quoted-comment {
+    backdrop-filter: brightness(80%);
+    border: 0.1em solid #ccc;
+    border-left: 0.4em solid #ccc;
+    padding: 1em;
+    margin-bottom: 4em;
+    font-style: italic;
+}
