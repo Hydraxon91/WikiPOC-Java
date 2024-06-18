@@ -6,9 +6,11 @@ import com.hydraxon91.backend.models.UserModels.UserProfile;
 import com.hydraxon91.backend.repositories.UserRepository.UserRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
 
+@Service
 public class AuthService implements IAuthService{
     
     private final UserRepository _userRepository;
