@@ -23,6 +23,18 @@ public class UserProfile {
     @OneToOne(mappedBy = "userProfile")
     private ApplicationUser user;
 
+    // Required no-argument constructor
+    public UserProfile() {
+        // No specific initialization needed for a no-arg constructor
+    }
+
+    public UserProfile(String userId, String userName, String profilePicture) {
+        this.userId = userId;
+        this.userName = userName;
+        this.profilePicture = profilePicture;
+        this.displayName = userName;
+    }
+
     // Getters and Setters
 
     public UUID getId() {
@@ -43,10 +55,6 @@ public class UserProfile {
 
     public String getUserName() {
         return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public String getProfilePicture() {
