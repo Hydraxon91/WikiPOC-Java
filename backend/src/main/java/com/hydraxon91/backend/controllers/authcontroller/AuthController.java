@@ -1,4 +1,4 @@
-﻿package com.hydraxon91.backend.controllers.authcontroller;
+package com.hydraxon91.backend.controllers.authcontroller;
 
 import com.hydraxon91.backend.services.Authentication.AuthResult;
 import com.hydraxon91.backend.services.Authentication.IAuthService;

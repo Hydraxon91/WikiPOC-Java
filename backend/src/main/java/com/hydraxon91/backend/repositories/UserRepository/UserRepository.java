@@ -1,13 +1,15 @@
-﻿package com.hydraxon91.backend.repositories.UserRepository;
+package com.hydraxon91.backend.repositories.UserRepository;
 
 import com.hydraxon91.backend.models.UserModels.ApplicationUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.UUID;
 
+@Repository
 public interface UserRepository extends JpaRepository<ApplicationUser, UUID>{
     Optional<ApplicationUser> findByEmail(String email);
     Optional<ApplicationUser> findByUsername(String username);

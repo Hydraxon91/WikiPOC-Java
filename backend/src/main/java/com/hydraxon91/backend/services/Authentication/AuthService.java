@@ -1,9 +1,10 @@
-﻿package com.hydraxon91.backend.services.Authentication;
+package com.hydraxon91.backend.services.Authentication;
 
 import com.hydraxon91.backend.models.UserModels.ApplicationUser;
 import com.hydraxon91.backend.models.UserModels.Role;
 import com.hydraxon91.backend.models.UserModels.UserProfile;
 import com.hydraxon91.backend.repositories.UserRepository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,8 @@ public class AuthService implements IAuthService{
     private final UserRepository _userRepository;
     private final PasswordEncoder _passwordEncoder;
     private final ITokenServices _tokenServices;
-    
+
+    @Autowired
     public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, TokenService tokenService) {
         this._passwordEncoder = passwordEncoder;
         this._userRepository = userRepository;

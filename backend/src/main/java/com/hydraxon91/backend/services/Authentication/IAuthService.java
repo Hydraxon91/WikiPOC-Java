@@ -1,4 +1,4 @@
-﻿package com.hydraxon91.backend.services.Authentication;
+package com.hydraxon91.backend.services.Authentication;
 
 import java.util.concurrent.CompletableFuture;
 

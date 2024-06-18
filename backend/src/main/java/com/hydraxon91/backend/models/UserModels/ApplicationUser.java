@@ -1,4 +1,4 @@
-﻿package com.hydraxon91.backend.models.UserModels;
+package com.hydraxon91.backend.models.UserModels;
 
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;

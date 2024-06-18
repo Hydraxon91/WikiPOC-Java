@@ -1,4 +1,4 @@
-﻿package com.hydraxon91.backend.models.UserModels;
+package com.hydraxon91.backend.models.UserModels;
 
 import org.springframework.security.core.GrantedAuthority;
 import jakarta.persistence.*;
@@ -14,9 +14,6 @@ public class Role implements GrantedAuthority {
     private UUID id;
 
     private String name;
-
-    @ManyToMany(mappedBy = "roles")
-    private Set<ApplicationUser> users = new HashSet<>();
 
     @Override
     public String getAuthority() {
@@ -39,13 +36,5 @@ public class Role implements GrantedAuthority {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Set<ApplicationUser> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<ApplicationUser> users) {
-        this.users = users;
     }
 }
