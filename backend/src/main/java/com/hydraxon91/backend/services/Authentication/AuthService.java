@@ -2,7 +2,9 @@
 
 import com.hydraxon91.backend.models.UserModels.ApplicationUser;
 import com.hydraxon91.backend.models.UserModels.Role;
+import com.hydraxon91.backend.models.UserModels.UserProfile;
 import com.hydraxon91.backend.repositories.UserRepository.UserRepository;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.concurrent.CompletableFuture;
@@ -41,17 +43,32 @@ public class AuthService implements IAuthService{
             newUser.setUsername(username);
             newUser.setPassword(_passwordEncoder.encode(password));
             
-            // Save to Db
-            ApplicationUser savedUser = _userRepository.save(newUser);
+            // Create UserProfile
+            UserProfile userProfile = new UserProfile(newUser.getId().toString(), username, "base_picture");
+            userProfile.setUser(newUser);
             
-            // Generate JWT Token 
-            Role role = new Role();
-            role.setName("ROLE_USER");
-            String token = _tokenServices.createToken(savedUser, role);
+            // Set UserProfile to ApplicationUser
+            newUser.setProfile(userProfile);
+            
+            try {
+                // Save to Db
+                ApplicationUser savedUser = _userRepository.save(newUser);
 
-            // Create and return AuthResult
-            AuthResult result = new AuthResult(true, savedUser.getEmail(), savedUser.getUsername(), token);
-            return result;
+                // Generate JWT Token 
+                Role role = new Role();
+                role.setName("ROLE_USER");
+                String token = _tokenServices.createToken(savedUser, role);
+
+                // Create and return AuthResult
+                AuthResult result = new AuthResult(true, savedUser.getEmail(), savedUser.getUsername(), token);
+                return result;
+            } catch (DataAccessException ex) {
+                // Handle database exception
+                AuthResult result = new AuthResult(false, email, username, null);
+                result.addErrorMessage("database", "Failed to register user");
+                return result;
+            }
+            
         });
     }
     
