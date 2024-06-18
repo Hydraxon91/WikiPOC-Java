@@ -26,8 +26,8 @@ public class TokenService implements  ITokenServices{
     public String createToken(ApplicationUser user, Role role){
         Date now = new Date();
         Date expiration = new Date(now.getTime() + jwtExpiration * 1000);
-        
-        Key key = Keys.hmacShaKeyFor(jwtIssuer.getBytes());
+
+        Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
         
         return Jwts.builder()
                 .setSubject(user.getId().toString())
