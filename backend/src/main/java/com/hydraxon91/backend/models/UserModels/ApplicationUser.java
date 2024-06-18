@@ -15,8 +15,13 @@ public class ApplicationUser implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @Column(unique = true, nullable = false)
     private String username;
+
+    @Column(nullable = false)
     private String password;
+
+    @Column(unique = true, nullable = false)
     private String email;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -27,14 +32,18 @@ public class ApplicationUser implements UserDetails {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    public UserProfile getProfile() {
-        return userProfile;
+    // Constructors
+    public ApplicationUser() {
+        // Default constructor
     }
 
-    public void setProfile(UserProfile profile) {
-        this.userProfile = profile;
+    public ApplicationUser(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
     }
 
+    // UserDetails methods
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Set.of(role);  // Return a set containing the single role
@@ -70,20 +79,29 @@ public class ApplicationUser implements UserDetails {
         return true;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    // Getters and setters
+    public UUID getId() {
+        return id;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public String getEmail() {
-        return email;
+    public UserProfile getProfile() {
+        return userProfile;
+    }
+
+    public void setProfile(UserProfile profile) {
+        this.userProfile = profile;
     }
 
     public Role getRole() {
@@ -94,11 +112,11 @@ public class ApplicationUser implements UserDetails {
         this.role = role;
     }
 
-    public UUID getId() {
-        return id;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
