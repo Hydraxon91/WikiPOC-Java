@@ -11,8 +11,8 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.util.Date;
+import java.util.logging.Logger;
 
 @Service
 public class TokenService implements  ITokenServices{
@@ -30,6 +30,11 @@ public class TokenService implements  ITokenServices{
 
     private SecretKey secretKey;
 
+    private static final String CLAIM_USERNAME = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name";
+    private static final String CLAIM_EMAIL = "email";
+    private static final String CLAIM_ROLE = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
+    
+
     @PostConstruct
     public void init() {
         // Initialize the secret key from the property
@@ -43,9 +48,9 @@ public class TokenService implements  ITokenServices{
         
         return Jwts.builder()
                 .setSubject(user.getUsername())
-                .claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", user.getUsername())
-                .claim("email", user.getEmail())
-                .claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", role.getName())
+                .claim(CLAIM_USERNAME, user.getUsername())
+                .claim(CLAIM_EMAIL, user.getEmail())
+                .claim(CLAIM_ROLE, role.getName())
                 .setIssuedAt(now)
                 .setExpiration(expiration)
                 .setIssuer(jwtIssuer)
@@ -56,12 +61,12 @@ public class TokenService implements  ITokenServices{
 
     @Override
     public String extractRole(String token) {
-        return getClaims(token).get("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", String.class);
+        return getClaims(token).get(CLAIM_ROLE, String.class);
     }
 
     @Override
     public String extractUsername(String token) {
-        return getClaims(token).getSubject();
+        return getClaims(token).get(CLAIM_USERNAME, String.class);
     }
 
     private Claims getClaims(String token) {
