@@ -2,7 +2,10 @@ package com.hydraxon91.backend.services.User;
 
 import com.hydraxon91.backend.models.UserModels.UserProfile;
 import com.hydraxon91.backend.repositories.UserRepository.UserProfileRepository;
+import com.hydraxon91.backend.security.JwtTokenFilter;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,16 +44,17 @@ public class UserProfileService {
     }
     
     @Transactional
-    public UserProfile updateUserProfile(UUID existingId, UserProfile updatedProfile, MultipartFile profilePictureFile) throws IOException {
-        UserProfile existingProfile = userProfileRepository.findByUserId(existingId)
-                .orElseThrow(() -> new IllegalArgumentException("UserProfile with ID " + existingId + " not found."));
+    public UserProfile updateUserProfile(UUID existingId, String displayName, MultipartFile profilePictureFile) throws IOException {
+        UserProfile existingProfile = userProfileRepository.findById(existingId).orElse(null);
 
-        existingProfile.setDisplayName(updatedProfile.getDisplayName());
+        if (existingProfile == null) {
+            throw new IllegalArgumentException("UserProfile with ID " + existingId + " not found.");
+        }
         
+        existingProfile.setDisplayName(displayName);
         if (profilePictureFile != null && !profilePictureFile.isEmpty()) {
             String fileName = "profile_pictures/" + existingProfile.getUserName() + "_pfp" + getExtension(profilePictureFile.getOriginalFilename());
             Path filePath = Paths.get(picturesPathContainer, fileName);
-
             File file = new File(filePath.toString());
             file.getParentFile().mkdirs();
             
@@ -61,7 +65,9 @@ public class UserProfileService {
             existingProfile.setProfilePicture(fileName);
         }
         
-        return userProfileRepository.save(existingProfile);
+        userProfileRepository.save(existingProfile);
+        
+        return existingProfile;
     }
 
     @Transactional
