@@ -5,4 +5,7 @@ import com.hydraxon91.backend.models.UserModels.Role;
 
 public interface ITokenServices {
     String createToken(ApplicationUser user, Role role);
+    String extractRole(String token);
+    String extractUsername(String token);
+    
 }
