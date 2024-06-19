@@ -7,7 +7,7 @@ CREATE TABLE role (
 -- Create UserProfile table first
 CREATE TABLE user_profile (
                               id uniqueidentifier PRIMARY KEY,
-                              user_id VARCHAR(255) NOT NULL,
+                              user_id uniqueidentifier NOT NULL,
                               user_name VARCHAR(255),
                               profile_picture VARCHAR(255),
                               display_name VARCHAR(255),
