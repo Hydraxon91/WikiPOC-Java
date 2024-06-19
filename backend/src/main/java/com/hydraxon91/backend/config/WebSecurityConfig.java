@@ -14,7 +14,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 @Configuration
 @EnableWebSecurity
@@ -25,9 +24,6 @@ public class WebSecurityConfig {
     @Value("${allowed.origins}")
     private List<String> allowedOrigins;
     
-    // Logger instance
-    private static final Logger logger = Logger.getLogger(WebSecurityConfig.class.getName());
-
     public WebSecurityConfig(JwtTokenFilter jwtTokenFilter) {
         this.jwtTokenFilter = jwtTokenFilter;
     }
@@ -41,6 +37,7 @@ public class WebSecurityConfig {
                         authorizeRequests
                                 .requestMatchers("/api/public/**").permitAll()
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/api/user-profiles/username/**").permitAll()
                                 .requestMatchers("/api/**").authenticated()
                 )
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
@@ -57,11 +54,7 @@ public class WebSecurityConfig {
 //        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-
-        // Logging the allowed origins
-        logger.info("Allowed Origins: " + allowedOrigins);
-        
+        source.registerCorsConfiguration("/**", configuration);        
         
         return source;
     }
