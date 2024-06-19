@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@RequestMapping("/public/auth")
+@RequestMapping("/api/public/auth")
 public class AuthController {
     private final IAuthService authService;
 
