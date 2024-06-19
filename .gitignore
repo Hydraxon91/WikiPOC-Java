@@ -25,3 +25,4 @@ replay_pid*
 frontend/.env
 backend/src/main/resources/application.properties
 .env
+/pictures
