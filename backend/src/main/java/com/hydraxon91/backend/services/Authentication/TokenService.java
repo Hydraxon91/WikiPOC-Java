@@ -42,10 +42,10 @@ public class TokenService implements  ITokenServices{
         Date expiration = new Date(now.getTime() + jwtExpiration * 1000 * 60);
         
         return Jwts.builder()
-                .setSubject(user.getId().toString())
-                .claim("username", user.getUsername())
+                .setSubject(user.getUsername())
+                .claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", user.getUsername())
                 .claim("email", user.getEmail())
-                .claim("role", role.getName())
+                .claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", role.getName())
                 .setIssuedAt(now)
                 .setExpiration(expiration)
                 .setIssuer(jwtIssuer)
@@ -56,7 +56,7 @@ public class TokenService implements  ITokenServices{
 
     @Override
     public String extractRole(String token) {
-        return getClaims(token).get("role", String.class);
+        return getClaims(token).get("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", String.class);
     }
 
     @Override

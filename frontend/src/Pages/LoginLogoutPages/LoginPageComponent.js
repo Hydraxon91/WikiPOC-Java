@@ -47,7 +47,6 @@ export default function LoginPageComponent({handleLogin}){
     
     useEffect(()=>{
         if (response) {
-            console.log(response)
             if (response?.token) {
                 login(response.token);
                 alert('Succesfully logged in!');
