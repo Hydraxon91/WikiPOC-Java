@@ -1,4 +1,4 @@
-package com.hydraxon91.backend.controllers.authcontroller;
+package com.hydraxon91.backend.controllers.usercontrollers;
 
 import com.hydraxon91.backend.models.UserModels.ApplicationUser;
 import com.hydraxon91.backend.repositories.UserRepository.UserRepository;
