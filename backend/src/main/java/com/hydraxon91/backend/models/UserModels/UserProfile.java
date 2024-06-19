@@ -13,7 +13,7 @@ public class UserProfile {
 
     @JsonIgnore
     @Column(name = "user_id")
-    private String userId;
+    private UUID userId;
 
     private String userName;
     private String profilePicture;
@@ -28,8 +28,7 @@ public class UserProfile {
         // No specific initialization needed for a no-arg constructor
     }
 
-    public UserProfile(String userId, String userName, String profilePicture) {
-        this.userId = userId;
+    public UserProfile(String userName, String profilePicture) {
         this.userName = userName;
         this.profilePicture = profilePicture;
         this.displayName = userName;
@@ -45,11 +44,11 @@ public class UserProfile {
         this.id = id;
     }
 
-    public String getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 

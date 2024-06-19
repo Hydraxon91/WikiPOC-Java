@@ -37,7 +37,7 @@ public class ApplicationUser implements UserDetails {
         // Default constructor
     }
 
-    public ApplicationUser(String username, String password, String email) {
+    public ApplicationUser(String email, String username, String password) {
         this.username = username;
         this.password = password;
         this.email = email;
