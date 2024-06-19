@@ -3,6 +3,7 @@ package com.hydraxon91.backend.services.Authentication;
 import com.hydraxon91.backend.models.UserModels.ApplicationUser;
 import com.hydraxon91.backend.models.UserModels.Role;
 import io.jsonwebtoken.Claims;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -25,11 +26,12 @@ public class TokenService implements  ITokenServices{
     private int jwtExpiration;
 
     @Value("${jwt.issuer-signing-key}")
-    private String jwtSecretKey = "my-32-character-ultra-secure-and-ultra-long-secret"; // Property for the secret key, ideally fetched from a secure location
+    private String jwtSecretKey; // Property for the secret key, ideally fetched from a secure location
 
     private SecretKey secretKey;
 
-    public TokenService() {
+    @PostConstruct
+    public void init() {
         // Initialize the secret key from the property
         this.secretKey = Keys.hmacShaKeyFor(jwtSecretKey.getBytes());
     }
@@ -37,7 +39,7 @@ public class TokenService implements  ITokenServices{
     @Override
     public String createToken(ApplicationUser user, Role role){
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + jwtExpiration * 1000);
+        Date expiration = new Date(now.getTime() + jwtExpiration * 1000 * 60);
         
         return Jwts.builder()
                 .setSubject(user.getId().toString())
