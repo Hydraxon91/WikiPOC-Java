@@ -1,30 +1,35 @@
 package com.hydraxon91.backend.config;
 
+import com.hydraxon91.backend.security.JwtTokenFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
+    private final JwtTokenFilter jwtTokenFilter;
+    
+    public WebSecurityConfig(JwtTokenFilter jwtTokenFilter) {
+        this.jwtTokenFilter = jwtTokenFilter;
+    }
+        
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                
-                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
-                    authorizationManagerRequestMatcherRegistry
-                            .requestMatchers("/public/**").permitAll()   // Public endpoints, no authentication required
-                            .requestMatchers("/admin/**").hasRole("ADMIN")   // Admin endpoints, must have ADMIN role
-                            .requestMatchers("/api/**").authenticated();   // API endpoints, authentication required
-                })
-                .httpBasic(Customizer.withDefaults())   
-                 // Disable CSRF for /public/**
                 .csrf().disable()
-                .cors(Customizer.withDefaults());
+                .cors().and()
+                .authorizeRequests(authorizeRequests ->
+                        authorizeRequests
+                                .requestMatchers("/api/public/**").permitAll()
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/api/**").authenticated()
+                )
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
