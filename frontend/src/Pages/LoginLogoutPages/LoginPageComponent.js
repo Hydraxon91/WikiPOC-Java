@@ -54,7 +54,7 @@ export default function LoginPageComponent({handleLogin}){
                 navigate('/');
             }
             else{
-                if (response['Bad credentials'][0] === 'Invalid email' || 'Invalid Username') {
+                if (response?.errorMessages?.usernameOrEmail) {
 
                         setEmailInputClass('login-inputbox wrong-credential');
                 }

@@ -44,25 +44,19 @@ export default function RegisterPageComponent(){
     },[emailInputClass, passwordInputClass, userInputClass, roleDropdownClass])
     
     useEffect(()=>{
-        console.log(response);
-        if (response?.DuplicateEmail || response?.errors?.Email) {
+        if (response?.DuplicateEmail || response?.errorMessages?.email) {
             setEmailInputClass("register-inputbox wrong-credential")
         }
-        if (response?.DuplicateUserName || response?.errors?.Username) {
+        if (response?.DuplicateUserName || response?.errorMessages?.username) {
             setUserInputClass("register-inputbox wrong-credential")
         }
-        if (response?.PasswordTooShort || response?.errors?.Password) {
+        if (response?.PasswordTooShort || response?.errorMessages?.password) {
             setPasswordInputClass("register-inputbox wrong-credential")
         }
-        if (response?.errors?.Role) {
-            setRoleDropdownClass("role-dropdown wrong-credential");
-        }
-        if (response?.userName) {
+        if (response?.username && response?.success) {
             alert('Succesfully registered!');
             navigate('/');
-
         }
-        
     },[response])
 
     return(
