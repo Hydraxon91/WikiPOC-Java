@@ -9,7 +9,8 @@ import org.springframework.context.annotation.ComponentScan;
 		"com.hydraxon91.backend.services",
 		"com.hydraxon91.backend.config",
 		"com.hydraxon91.backend.repositories",
-		"com.hydraxon91.backend.controllers"
+		"com.hydraxon91.backend.controllers",
+		"com.hydraxon91.backend.security"
 })public class BackendApplication {
 
 	public static void main(String[] args) {
