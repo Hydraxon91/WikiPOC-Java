@@ -9,13 +9,14 @@ const EditProfilePage = ({cookies}) => {
     const {decodedTokenContext} = useUserContext();
     const {styles} = useStyleContext();
     const { username } = useParams();
-    const [validateProfile, setValidateProfile] = useState(false);
+    const [validateProfile, setValidateProfile] = useState(true);
     const [userProfile, setUserProfile] = useState(null);
 
     useEffect(() => {
         const decodedTokenName = decodedTokenContext?.["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
         // decodedTokenName && (username === decodedTokenName && setValidateProfile(true));
         if (decodedTokenName) {
+
             if (username === decodedTokenName) {
                 setValidateProfile(true);
                 getUserProfileByUsername(username, setUserProfile);
