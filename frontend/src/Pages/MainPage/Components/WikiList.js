@@ -40,7 +40,7 @@ const WikiList = ({ handleLogout, cookies, categories}) => {
   };
 
   const UserTools = () =>{
-    return role==="Admin" ?
+    return role==="ADMIN" ?
      (
       <>
         <h3 style={{marginBottom:"5px", fontSize:'110%'}}>Admin Tools</h3>
