@@ -160,7 +160,7 @@ function App() {
                   </ProtectedRoute>
                 } />
                 <Route path="/edit-wiki" element={
-                  <ProtectedRoute roles={['Admin']} >
+                  <ProtectedRoute roles={['ADMIN']} >
                     <EditStylePage cookies={cookies["jwt_token"]}/>
                   </ProtectedRoute>
                 } />
@@ -175,23 +175,23 @@ function App() {
                   </PublicRoute>
                 } />
                 <Route path="/user-submissions" element={
-                  <ProtectedRoute roles={['Admin']} >
+                  <ProtectedRoute roles={['ADMIN']} >
                     <UserRequestsPageComponent/>
                   </ProtectedRoute>
                 } />
                 <Route path="/user-submissions/:id" element={
-                  <ProtectedRoute roles={['Admin']} >
+                  <ProtectedRoute roles={['ADMIN']} >
                     <CheckUserSubmittedPage/>
                   </ProtectedRoute>
                 } />
                 <Route path="/user-updates" element={
-                  <ProtectedRoute roles={['Admin']} >
+                  <ProtectedRoute roles={['ADMIN']} >
                     <UserRequestsPageComponent/>
                   </ProtectedRoute>
                 } />
 
                 <Route path="/user-updates/:id" element={
-                  <ProtectedRoute  roles={['Admin']} >
+                  <ProtectedRoute  roles={['ADMIN']} >
                     <CompareUpdatePage/>
                   </ProtectedRoute>
                 } />
@@ -202,7 +202,7 @@ function App() {
                   </ProtectedRoute>
                 } />
                 <Route path="/categories/edit" element={
-                  <ProtectedRoute  roles={['Admin']} >
+                  <ProtectedRoute  roles={['ADMIN']} >
                     <EditCategoriesPage setAppCategories={setCategories} cookies={cookies["jwt_token"]}/>
                   </ProtectedRoute>
                 }/>
@@ -210,7 +210,7 @@ function App() {
                 <Route path="/forum" element={<ForumLandingPage />} />
                 <Route path="/forum/:slug" element={<ForumPage cookies={cookies["jwt_token"]} />} />
                 <Route path="/forum/:slug/create-topic" element={
-                  <ProtectedRoute  roles={['Admin']}>
+                  <ProtectedRoute  roles={['ADMIN']}>
                     <CreateForumTopic cookies={cookies["jwt_token"]}/>
                   </ProtectedRoute>
                 }/>

@@ -14,7 +14,7 @@ const WikiList = ({ handleLogout, cookies, categories}) => {
     if (decodedTokenContext) {
       var role = decodedTokenContext["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
       setRole(role);
-      if (role === "Admin") {
+      if (role === "ADMIN") {
         fetchNewPageTitles(cookies["jwt_token"]);
         fetchUpdatePageTitles(cookies["jwt_token"]);
       }
