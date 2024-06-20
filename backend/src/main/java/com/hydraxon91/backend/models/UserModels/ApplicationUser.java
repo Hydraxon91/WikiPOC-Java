@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
@@ -31,6 +34,15 @@ public class ApplicationUser implements UserDetails {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;
+
+    @Column(nullable = false)
+    private boolean isActive;
+
+    @Column(nullable = false)
+    private LocalDateTime createdDate;
+
+    @Column(nullable = false)
+    private LocalDateTime lastModifiedDate;
 
     // Constructors
     public ApplicationUser() {
@@ -76,7 +88,7 @@ public class ApplicationUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isActive;
     }
 
     // Getters and setters
@@ -118,5 +130,43 @@ public class ApplicationUser implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public void setCreatedDateNow() {
+        this.createdDate = LocalDateTime.now();
+    }
+
+    public void setCreatedDateFromUtilDate(Date date) {
+        this.createdDate = date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+    }
+
+    public LocalDateTime getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDateNow() {
+        this.createdDate = LocalDateTime.now();
+    }
+
+    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 }
