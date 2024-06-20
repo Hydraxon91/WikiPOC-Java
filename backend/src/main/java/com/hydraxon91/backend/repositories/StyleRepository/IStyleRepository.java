@@ -6,6 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.concurrent.CompletableFuture;
 
 public interface IStyleRepository {
-    CompletableFuture<StyleModel> getStylesAsync();
-    CompletableFuture<Void> updateStylesAsync(StyleModel updatedStyles, MultipartFile logoPictureFile);
+    StyleModel getStyles();
+    void updateStyles(StyleModel updatedStyles, MultipartFile logoPictureFile);
 }
