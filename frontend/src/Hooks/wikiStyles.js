@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 const WikiStyles = () => {
   const [styles, setStyles] = useState({
-    logo: '/img/logo.png',
+    logo: 'logo.png',
     wikiName: 'Your Wiki',
     bodyColor: '#507ced',
     articleRightColor: '#3c5fb8',
