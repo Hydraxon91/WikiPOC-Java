@@ -77,14 +77,11 @@ export const getUserProfileByUsername = async (username, setUser) => {
     return data;
   };
 
-export const getProfilePicture = async(pictureString) => {
+export const getProfilePicture = async(username) => {
   try {
-    if (pictureString.startsWith('blob:')) {
-      return pictureString; // Return the Blob URL directly
-    }
-    const response = await fetch(`${BASE_URL}/api/Image/profile/${pictureString}`);
+    const response = await fetch(`${BASE_URL}/api/public/picture/profile/${username}`);
     if (!response.ok) {
-        throw new Error(`Failed to get Profile Picture ${pictureString}. Status: ${response.status}`);
+        throw new Error(`Failed to get Profile Picture for user: ${username}. Status: ${response.status}`);
     }
 
     // Assuming the response is the URL of the image
