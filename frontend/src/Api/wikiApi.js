@@ -199,7 +199,7 @@ export const getLogo = async(pictureString) => {
     if (pictureString.startsWith('blob:')) {
       return pictureString; // Return the Blob URL directly
     }
-    const response = await fetch(`${BASE_URL}/api/Image/${pictureString}`);
+    const response = await fetch(`${BASE_URL}/api/public/picture/logo/${pictureString}`);
     if (!response.ok) {
         throw new Error(`Failed to get Logo Picture ${pictureString}. Status: ${response.status}`);
     }
