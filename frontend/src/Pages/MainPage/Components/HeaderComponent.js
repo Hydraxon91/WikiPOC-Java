@@ -9,10 +9,11 @@ const HeaderComponent = ({userName, userRole}) => {
     const [title, setTitle] = useState("Default Title");
 
     useEffect(()=>{
-        if (styles && styles.logo) {
+        if (styles) {
             // Fetch profile picture when the component mounts or profilePicture prop changes
             setTitle(styles.wikiName);
-            getLogo(styles.logo)
+            if (styles.logo) {
+                getLogo(styles.logo)
                 .then(data => {
                     if (data instanceof Blob) { // Check if data is a Blob object
                         const imageUrl = URL.createObjectURL(data);
@@ -29,8 +30,9 @@ const HeaderComponent = ({userName, userRole}) => {
                     // Use default image URL in case of error
                     setImageSrc("/img/logo.png");
                 });
+            }
         }
-    },[styles.logo])
+    },[styles.title, styles.logo])
 
     return (
         <div className="top-header" style={{ background: styles.bodyColor ? `linear-gradient(to bottom, ${styles.bodyColor}, ${styles.articleColor})` : '' }}>
