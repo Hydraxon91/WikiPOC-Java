@@ -4,7 +4,7 @@ const StyleContext = createContext();
 
 export const StyleProvider = ({ children }) => {
   const [styles, setStyles] = useState({
-    logo: 'logo_pfp.png',
+    logo: 'logo.png',
     wikiName: 'Your Wiki',
     bodyColor: '#507ced',
     articleRightColor: '#3c5fb8',

@@ -47,14 +47,13 @@ export default function LoginPageComponent({handleLogin}){
     
     useEffect(()=>{
         if (response) {
-            console.log(response)
             if (response?.token) {
                 login(response.token);
                 alert('Succesfully logged in!');
                 navigate('/');
             }
             else{
-                if (response['Bad credentials'][0] === 'Invalid email' || 'Invalid Username') {
+                if (response?.errorMessages?.usernameOrEmail) {
 
                         setEmailInputClass('login-inputbox wrong-credential');
                 }

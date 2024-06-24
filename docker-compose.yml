@@ -1,0 +1,44 @@
+﻿version: '3.8'
+
+services:
+  sql-server:
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      SA_PASSWORD: ${DB_PASSWORD} 
+      ACCEPT_EULA: Y
+    ports:
+      - "1433:1433"  # Adjust the port mapping as needed
+      
+  wiki-backend:
+    image: wiki-backend-java:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ${PICTURES_PATH}:/pictures
+    ports:
+      - "5000:80"  # Adjust the port mapping as needed
+    depends_on:
+      - sql-server
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      DB_HOST: ${DB_HOST}
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_ISSUER_SIGNING_KEY: ${JWT_SIGNING_KEY}
+      JWT_VALID_AUDIENCE: ${JWT_AUDIENCE}
+      JWT_VALID_ISSUER: ${JWT_ISSUER}
+      JWT_TOKEN_TIME: ${JWT_TOKEN_TIME}
+      PICTURES_PATH: ${PICTURES_PATH}
+      PICTURES_PATH_CONTAINER: ${PICTURES_PATH_CONTAINER}
+      CORS_ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+
+  wiki-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: ${REACT_APP_API_URL}
+    ports:
+      - "3000:80"

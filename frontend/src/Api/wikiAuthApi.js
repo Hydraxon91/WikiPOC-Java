@@ -2,10 +2,10 @@ const BASE_URL = process.env.REACT_APP_API_URL;
 
 export const handleLoginSubmit = async (email, password) => {
     const data = {
-        email: email,
+        usernameOrEmail: email,
         password: password,
     }
-    const response = await fetch(`${BASE_URL}/api/Auth/Login`, {
+    const response = await fetch(`${BASE_URL}/api/public/auth/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -23,7 +23,7 @@ export const handleRegisterSubmit = async (email, username, password, role) => {
         password: password,
         role: role
     }
-    const response = await fetch(`${BASE_URL}/api/Auth/Register`, {
+    const response = await fetch(`${BASE_URL}/api/public/auth/register`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

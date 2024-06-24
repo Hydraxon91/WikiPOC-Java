@@ -43,10 +43,10 @@ export const createWikiPage = async (newPage, token, decodedToken, images) => {
   console.log(newPage);
   var role = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
   var userName = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
-  var url = role==="Admin"? `${BASE_URL}/api/WikiPages/admin` : `${BASE_URL}/api/WikiPages/user`;
+  var url = role==="ADMIN"? `${BASE_URL}/api/WikiPages/admin` : `${BASE_URL}/api/WikiPages/user`;
 
   const formData = new FormData();
-  if (role !== "Admin") {
+  if (role !== "ADMIN") {
     formData.append('wikiPageWithImagesInputModel.IsNewPage', true)
     formData.append('wikiPageWithImagesInputModel.Approved', false)
     formData.append('wikiPageWithImagesInputModel.SubmittedBy', userName);
@@ -96,11 +96,9 @@ export const updateWikiPage = async (updatedPage, token, decodedToken, images) =
   console.log(updatedPage);
     var role = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
     var userName = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
-    var url = role==="Admin"? `${BASE_URL}/api/WikiPages/admin/${updatedPage.id}` : `${BASE_URL}/api/WikiPages/userUpdate/${updatedPage.id}`;
-    console.log(url);
+    var url = role==="ADMIN"? `${BASE_URL}/api/WikiPages/admin/${updatedPage.id}` : `${BASE_URL}/api/WikiPages/userUpdate/${updatedPage.id}`;
     const formData = new FormData();
-    if (role !== "Admin") {
-      console.log("notadmin");
+    if (role !== "ADMIN") {
       formData.append('wikiPageWithImagesInputModel.WikiPageId', updatedPage.id)
       formData.append('wikiPageWithImagesInputModel.SubmittedBy', userName);
     }
@@ -151,7 +149,7 @@ export const deleteWikiPage = async (id, token) =>{
 
 export const fetchCurrentStyles = async (setStyles) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/Style`); // Replace with your actual endpoint
+    const response = await fetch(`${BASE_URL}/api/style`); // Replace with your actual endpoint
     if (!response.ok) {
       throw new Error(`Failed to fetch default styles. Status: ${response.status}`);
     }
@@ -164,18 +162,21 @@ export const fetchCurrentStyles = async (setStyles) => {
 
 export const updateStyles = async (newStyles, logoPictureFile, token) => {
   const formData = new FormData();
-  formData.append('styleUpdateForm.StyleModel.WikiName', newStyles.wikiName);
-  formData.append('styleUpdateForm.StyleModel.BodyColor', newStyles.bodyColor);
-  formData.append('styleUpdateForm.StyleModel.ArticleRightColor', newStyles.articleRightColor);
-  formData.append('styleUpdateForm.StyleModel.ArticleRightInnerColor', newStyles.articleRightInnerColor);
-  formData.append('styleUpdateForm.StyleModel.ArticleColor', newStyles.articleColor);
-  formData.append('styleUpdateForm.StyleModel.FooterListLinkTextColor', newStyles.footerListLinkTextColor);
-  formData.append('styleUpdateForm.StyleModel.FooterListTextColor', newStyles.footerListTextColor);
-  formData.append('styleUpdateForm.StyleModel.FontFamily', newStyles.fontFamily);
-  formData.append('styleUpdateForm.LogoPictureFile', logoPictureFile);
+  formData.append('styleModel.logo', newStyles.logo);
+  formData.append('styleModel.wikiName', newStyles.wikiName);
+  formData.append('styleModel.bodyColor', newStyles.bodyColor);
+  formData.append('styleModel.articleRightColor', newStyles.articleRightColor);
+  formData.append('styleModel.articleRightInnerColor', newStyles.articleRightInnerColor);
+  formData.append('styleModel.articleColor', newStyles.articleColor);
+  formData.append('styleModel.footerListLinkTextColor', newStyles.footerListLinkTextColor);
+  formData.append('styleModel.footerListTextColor', newStyles.footerListTextColor);
+  formData.append('styleModel.fontFamily', newStyles.fontFamily);
+  if (logoPictureFile) {
+    formData.append('logoPictureFile', logoPictureFile);
+  }
 
   try {
-    const response = await fetch(`${BASE_URL}/api/Style`, {
+    const response = await fetch(`${BASE_URL}/api/style`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -199,7 +200,7 @@ export const getLogo = async(pictureString) => {
     if (pictureString.startsWith('blob:')) {
       return pictureString; // Return the Blob URL directly
     }
-    const response = await fetch(`${BASE_URL}/api/Image/${pictureString}`);
+    const response = await fetch(`${BASE_URL}/api/public/picture/logo/${pictureString}`);
     if (!response.ok) {
         throw new Error(`Failed to get Logo Picture ${pictureString}. Status: ${response.status}`);
     }
