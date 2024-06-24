@@ -65,7 +65,7 @@ public class AuthService implements IAuthService{
                 // Create UserProfile
                 UserProfile userProfile = new UserProfile(username, "base_picture");
                 userProfile.setUser(savedUser);
-                userProfile.setUserId(savedUser.getId());
+//                userProfile.setUserId(savedUser.getId());
 
                 // Set UserProfile to ApplicationUser
                 savedUser.setProfile(userProfile);

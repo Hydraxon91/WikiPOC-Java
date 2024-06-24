@@ -8,10 +8,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+@Entity
 public class UserComment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID uuid;
+    
     private String content;
     
     @ManyToOne

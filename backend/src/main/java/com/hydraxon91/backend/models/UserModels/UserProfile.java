@@ -2,25 +2,26 @@ package com.hydraxon91.backend.models.UserModels;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+
 import java.util.UUID;
 
 @Entity
 public class UserProfile {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
     private UUID id;
-
-    @JsonIgnore
-    @Column(name = "user_id")
-    private UUID userId;
 
     private String userName;
     private String profilePicture;
     private String displayName;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "userProfile")
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private ApplicationUser user;
 
     // Required no-argument constructor
@@ -42,14 +43,6 @@ public class UserProfile {
 
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
     }
 
     public String getUserName() {

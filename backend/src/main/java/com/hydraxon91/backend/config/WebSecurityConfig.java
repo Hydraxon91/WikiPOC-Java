@@ -40,6 +40,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/api/user-profiles/username/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/style/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/user-comments/get/**").permitAll()
                                 .requestMatchers("/api/**").authenticated()
                 )
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

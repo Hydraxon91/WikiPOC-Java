@@ -90,7 +90,7 @@ public class DataLoader implements CommandLineRunner {
                 // Create admin profile
                 UserProfile adminProfile = new UserProfile(adminUsername, null);
                 adminProfile.setUser(savedUser);
-
+                
                 // Set UserProfile to ApplicationUser
                 savedUser.setProfile(adminProfile);
 
@@ -101,7 +101,7 @@ public class DataLoader implements CommandLineRunner {
                 // Save the updated savedUser (with profile) back to the database
                 userRepository.save(savedUser);
                 // Save admin profile
-                userProfileRepository.save(adminProfile);
+                // userProfileRepository.save(adminProfile);
             }
         } 
     }
