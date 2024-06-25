@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface ArticlePageRepository extends JpaRepository<ArticlePage, UUID> {
+    boolean existsBySlug(String slug);
 }
