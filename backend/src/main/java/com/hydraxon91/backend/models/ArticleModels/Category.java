@@ -22,6 +22,9 @@ public class Category {
 
     public Category(){}
 
+    @Column(unique = true)
+    private String slug;
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArticlePage> articlePages = new ArrayList<>();
 
@@ -32,6 +35,14 @@ public class Category {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug){
+        this.slug = slug;
     }
 
     public String getCategoryName() {
