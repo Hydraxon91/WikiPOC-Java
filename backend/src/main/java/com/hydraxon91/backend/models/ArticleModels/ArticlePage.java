@@ -1,7 +1,6 @@
 package com.hydraxon91.backend.models.ArticleModels;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hydraxon91.backend.models.UserModels.UserComment;
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
 import org.hibernate.annotations.GenericGenerator;
@@ -12,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
+@Table(name = "article_pages")
 public class ArticlePage {
 
     @Id
@@ -37,11 +37,11 @@ public class ArticlePage {
     private LocalDateTime lastUpdateDate;
     private boolean legacyArticlePage = false;
     
-    @OneToMany(mappedBy = "article-page", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "articlePage", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Paragraph> paragraphs = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article-page", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserComment> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "articlePage", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ArticleComment> comments = new ArrayList<>();
 
     // Getters and setters
     public UUID getId() {
@@ -132,11 +132,11 @@ public class ArticlePage {
         this.paragraphs = paragraphs;
     }
 
-    public List<UserComment> getComments() {
+    public List<ArticleComment> getComments() {
         return comments;
     }
 
-    public void setComments(List<UserComment> comments) {
+    public void setComments(List<ArticleComment> comments) {
         this.comments = comments;
     }
     
