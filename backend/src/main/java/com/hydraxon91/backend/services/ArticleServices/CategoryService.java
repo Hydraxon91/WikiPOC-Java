@@ -35,6 +35,8 @@ public class CategoryService {
 
         Category newCategory = new Category();
         newCategory.setCategoryName(categoryName);
+        String slug = generateSlug(categoryName);
+        newCategory.setSlug(slug);
         return categoryRepository.save(newCategory);
     }
 
@@ -45,5 +47,21 @@ public class CategoryService {
             return true;
         }
         return false;
+    }
+
+    public String generateSlug(String title) {
+        String baseSlug = title.toLowerCase().replaceAll("\\s+", "-");
+        String finalSlug = baseSlug;
+        int suffix = 1;
+
+        while (isSlugExists(finalSlug)) {
+            finalSlug = baseSlug + "-" + suffix++;
+        }
+
+        return finalSlug;
+    }
+
+    public boolean isSlugExists(String slug) {
+        return categoryRepository.existsBySlug(slug);
     }
 }
