@@ -97,6 +97,7 @@ public class DataLoader implements CommandLineRunner {
             if (categoryRepository.findByCategoryName(categoryName).isEmpty()) {
                 // Create category
                 Category category = new Category(categoryName);
+                category.setSlug(categoryName.toLowerCase().replaceAll("\\s+", "-"));
                 categoryRepository.save(category);
             }
         }
