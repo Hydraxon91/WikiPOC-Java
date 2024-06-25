@@ -42,6 +42,7 @@ public class WebSecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/api/style/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/user-comments/get/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/article-pages/**").permitAll()
                                 .requestMatchers("/api/**").authenticated()
                 )
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

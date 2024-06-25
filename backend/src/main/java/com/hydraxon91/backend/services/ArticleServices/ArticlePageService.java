@@ -1,7 +1,6 @@
 package com.hydraxon91.backend.services.ArticleServices;
 
 import com.hydraxon91.backend.models.ArticleModels.ArticlePage;
-import com.hydraxon91.backend.models.ArticleModels.Category;
 import com.hydraxon91.backend.models.ArticleModels.Paragraph;
 import com.hydraxon91.backend.repositories.ArticleRepositories.ArticlePageRepository;
 import com.hydraxon91.backend.repositories.ArticleRepositories.ParagraphRepository;
@@ -33,6 +32,10 @@ public class ArticlePageService {
 
     public Optional<ArticlePage> getArticleBySlug(String slug) {
         return articlePageRepository.findBySlug(slug);
+    }
+
+    public List<ArticlePageProjection> getArticleTitlesAndSlugs() {
+        return articlePageRepository.findArticleTitlesAndSlugs();
     }
 
     public ArticlePage createArticlePage(ArticlePage articlePage) {

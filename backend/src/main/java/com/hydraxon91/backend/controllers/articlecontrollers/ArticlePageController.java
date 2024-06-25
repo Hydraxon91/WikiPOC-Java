@@ -2,6 +2,7 @@ package com.hydraxon91.backend.controllers.articlecontrollers;
 
 import com.hydraxon91.backend.models.ArticleModels.ArticlePage;
 import com.hydraxon91.backend.models.ArticleModels.Paragraph;
+import com.hydraxon91.backend.services.ArticleServices.ArticlePageProjection;
 import com.hydraxon91.backend.services.ArticleServices.ArticlePageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,12 @@ public class ArticlePageController {
         return ResponseEntity.ok(articlePages);
     }
 
+    @GetMapping("/titles-and-slugs")
+    public ResponseEntity<List<ArticlePageProjection>> getArticleTitlesAndSlugs() {
+        List<ArticlePageProjection> articleTitlesAndSlugs = articlePageService.getArticleTitlesAndSlugs();
+        return ResponseEntity.ok(articleTitlesAndSlugs);
+    }
+
     @GetMapping("/getbyid/{id}")
     public ResponseEntity<ArticlePage> getArticlePageById(@PathVariable UUID id) {
         ArticlePage articlePage = articlePageService.getArticlePageById(id);
@@ -37,7 +44,7 @@ public class ArticlePageController {
         return ResponseEntity.ok(articlePage);
     }
 
-    @GetMapping("/getbyslug/{id}")
+    @GetMapping("/getbyslug/{slug}")
     public ResponseEntity<ArticlePage> getArticlePageBySlug(@PathVariable String slug) {
         Optional<ArticlePage> articlePage = articlePageService.getArticleBySlug(slug);
         if (articlePage.isPresent()) {

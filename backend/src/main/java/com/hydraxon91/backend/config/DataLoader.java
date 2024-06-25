@@ -1,9 +1,11 @@
 package com.hydraxon91.backend.config;
 
+import com.hydraxon91.backend.models.ArticleModels.ArticlePage;
 import com.hydraxon91.backend.models.ArticleModels.Category;
 import com.hydraxon91.backend.models.UserModels.ApplicationUser;
 import com.hydraxon91.backend.models.UserModels.Role;
 import com.hydraxon91.backend.models.UserModels.UserProfile;
+import com.hydraxon91.backend.repositories.ArticleRepositories.ArticlePageRepository;
 import com.hydraxon91.backend.repositories.ArticleRepositories.CategoryRepository;
 import com.hydraxon91.backend.repositories.RoleRepository.RoleRepository;
 import com.hydraxon91.backend.repositories.UserRepository.UserRepository;
@@ -52,6 +54,8 @@ public class DataLoader implements CommandLineRunner {
 
     @Value("${test.user.email}")
     private String testEmail;
+    @Autowired
+    private ArticlePageRepository articlePageRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -63,6 +67,8 @@ public class DataLoader implements CommandLineRunner {
         createTestUser();
 
         createBaseCategories();
+
+        createBaseArticle();
     }
 
     private void createDefaultRoles() {
@@ -101,6 +107,27 @@ public class DataLoader implements CommandLineRunner {
                 categoryRepository.save(category);
             }
         }
+    }
+    
+    private void createBaseArticle() {
+        
+        Optional<Category> existingCategory = categoryRepository.findBySlug("science");
+        if (existingCategory.isPresent()){
+            Category category = existingCategory.get();
+            ArticlePage articlePage = new ArticlePage();
+            articlePage.setTitle("Test title");
+            articlePage.setSiteSub("Test Sitesub");
+            articlePage.setRoleNote("test note");
+            articlePage.setContent("Test content");
+            articlePage.setCategory(category);
+            articlePage.setCategoryId(category.getId());
+            articlePage.setSlug("test-title");
+            articlePage.setPostDate(LocalDateTime.now());
+            articlePage.setLastUpdateDate(LocalDateTime.now());
+            
+            articlePageRepository.save(articlePage);
+        }
+        
     }
     
     private void createAdminUser() {
