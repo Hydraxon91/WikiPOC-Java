@@ -16,9 +16,7 @@ import java.util.UUID;
 public class ApplicationUser implements UserDetails {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(columnDefinition = "BINARY(16)")
+    @GeneratedValue
     private UUID id;
 
     @Column(unique = true, nullable = false)

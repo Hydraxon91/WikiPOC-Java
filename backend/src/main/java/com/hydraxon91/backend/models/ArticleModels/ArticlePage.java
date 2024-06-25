@@ -15,9 +15,7 @@ import java.util.UUID;
 public class ArticlePage {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(columnDefinition = "BINARY(16)")
+    @GeneratedValue
     private UUID id;
 
     private String title;

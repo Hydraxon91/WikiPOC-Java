@@ -1,7 +1,7 @@
 package com.hydraxon91.backend.services.User;
 
 import com.hydraxon91.backend.models.UserModels.Comment;
-import com.hydraxon91.backend.repositories.UserRepository.CommentRepository;
+import com.hydraxon91.backend.repositories.UserRepository.UserCommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,39 +12,39 @@ import java.util.UUID;
 @Service
 public class CommentService {
 
-    private final CommentRepository commentRepository;
+    private final UserCommentRepository userCommentRepository;
 
     @Autowired
-    public CommentService(CommentRepository commentRepository) {
-        this.commentRepository = commentRepository;
+    public CommentService(UserCommentRepository userCommentRepository) {
+        this.userCommentRepository = userCommentRepository;
     }
 
     public Optional<Comment> getById(UUID id) {
-        return commentRepository.findById(id);
+        return userCommentRepository.findById(id);
     }
 
     public void add(Comment comment) {
         if (comment.getReplyToCommentId() != null) {
-            Comment parentComment = commentRepository.findById(comment.getReplyToCommentId())
+            Comment parentComment = userCommentRepository.findById(comment.getReplyToCommentId())
                     .orElseThrow(() -> new EntityNotFoundException("Parent comment not found"));
             parentComment.getReplies().add(comment);
-            commentRepository.save(parentComment);
+            userCommentRepository.save(parentComment);
         } else {
-            commentRepository.save(comment);
+            userCommentRepository.save(comment);
         }
     }
 
     public void update(UUID commentId, String updatedContent) {
-        Comment existingComment = commentRepository.findById(commentId)
+        Comment existingComment = userCommentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
         existingComment.setContent(updatedContent);
         existingComment.setEdited(true);
-        commentRepository.save(existingComment);
+        userCommentRepository.save(existingComment);
     }
 
     public void delete(UUID id) {
-        Comment existingComment = commentRepository.findById(id)
+        Comment existingComment = userCommentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
-        commentRepository.delete(existingComment);
+        userCommentRepository.delete(existingComment);
     }
 }

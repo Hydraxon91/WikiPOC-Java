@@ -11,12 +11,16 @@ import java.util.UUID;
 public class Category {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(columnDefinition = "BINARY(16)")
+    @GeneratedValue
     private UUID id;
 
     private String categoryName;
+    
+    public Category(String categoryName){
+        this.categoryName = categoryName;
+    }
+
+    public Category(){}
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArticlePage> articlePages = new ArrayList<>();

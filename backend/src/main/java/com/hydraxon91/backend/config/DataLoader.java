@@ -1,8 +1,10 @@
 package com.hydraxon91.backend.config;
 
+import com.hydraxon91.backend.models.ArticleModels.Category;
 import com.hydraxon91.backend.models.UserModels.ApplicationUser;
 import com.hydraxon91.backend.models.UserModels.Role;
 import com.hydraxon91.backend.models.UserModels.UserProfile;
+import com.hydraxon91.backend.repositories.ArticleRepositories.CategoryRepository;
 import com.hydraxon91.backend.repositories.RoleRepository.RoleRepository;
 import com.hydraxon91.backend.repositories.UserRepository.UserRepository;
 import com.hydraxon91.backend.repositories.UserRepository.UserProfileRepository;
@@ -13,9 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -28,6 +28,9 @@ public class DataLoader implements CommandLineRunner {
     
     @Autowired 
     private UserProfileRepository userProfileRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
     
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -41,12 +44,25 @@ public class DataLoader implements CommandLineRunner {
     @Value("${admin.user.email}")
     private String adminEmail;
 
+    @Value("${test.user.username}")
+    private String testUsername;
+
+    @Value("${test.user.password}")
+    private String testPassword;
+
+    @Value("${test.user.email}")
+    private String testEmail;
+
     @Override
     public void run(String... args) throws Exception {
         // Check if default roles exist, and create if not
         createDefaultRoles();
         
         createAdminUser();
+
+        createTestUser();
+
+        createBaseCategories();
     }
 
     private void createDefaultRoles() {
@@ -72,6 +88,20 @@ public class DataLoader implements CommandLineRunner {
             roleRepository.save(role);
         }
     }
+
+    private void createBaseCategories() {
+        List<String> categoryNames = Arrays.asList("Technology", "Science", "Politics");
+        
+        for (String categoryName : categoryNames) {
+            // Check if category already exists
+            if (categoryRepository.findByCategoryName(categoryName).isEmpty()) {
+                // Create category
+                Category category = new Category(categoryName);
+                categoryRepository.save(category);
+            }
+        }
+    }
+    
     private void createAdminUser() {
         // Check if admin user already exists
         Optional<ApplicationUser> adminUserOptional = userRepository.findByUsername(adminUsername);
@@ -104,6 +134,40 @@ public class DataLoader implements CommandLineRunner {
                 // userProfileRepository.save(adminProfile);
             }
         } 
+    }
+
+    private void createTestUser() {
+        // Check if admin user already exists
+        Optional<ApplicationUser> adminUserOptional = userRepository.findByUsername(testUsername);
+        if (adminUserOptional.isEmpty()) {
+            // Create admin user
+            ApplicationUser testUser = new ApplicationUser();
+            testUser.setPassword(passwordEncoder.encode(testPassword));
+            testUser.setUsername(testUsername);
+            testUser.setEmail(testEmail);
+            testUser.setActive(true);
+            testUser.setCreatedDate(LocalDateTime.now()); // Set current date/time
+            testUser.setLastModifiedDate(LocalDateTime.now());
+            ApplicationUser savedUser = userRepository.save(testUser);
+            // Only proceed if the adminUser has a valid ID
+            if (savedUser.getId() != null) {
+                // Create admin profile
+                UserProfile adminProfile = new UserProfile(testUsername, null);
+                adminProfile.setUser(savedUser);
+
+                // Set UserProfile to ApplicationUser
+                savedUser.setProfile(adminProfile);
+
+                // Assign roles to admin user
+                Optional<Role> testRoleOptional = roleRepository.findByName("USER");
+                testRoleOptional.ifPresent(role -> savedUser.setRole(role));
+
+                // Save the updated savedUser (with profile) back to the database
+                userRepository.save(savedUser);
+                // Save admin profile
+                // userProfileRepository.save(adminProfile);
+            }
+        }
     }
 
 }

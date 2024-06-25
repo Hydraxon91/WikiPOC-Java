@@ -14,7 +14,7 @@ import java.util.UUID;
 @DiscriminatorColumn(name = "comment_type", discriminatorType = DiscriminatorType.STRING)
 public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private UUID uuid;
     
     private String content;

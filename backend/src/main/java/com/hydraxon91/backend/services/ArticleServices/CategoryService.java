@@ -24,9 +24,7 @@ public class CategoryService {
     }
 
     public Optional<Category> getCategoryByName(String categoryName) {
-        return categoryRepository.findAll().stream()
-                .filter(category -> category.getCategoryName().equalsIgnoreCase(categoryName))
-                .findFirst();
+        return categoryRepository.findByCategoryName(categoryName);
     }
 
     public Category addCategory(String categoryName) throws IllegalArgumentException {

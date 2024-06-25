@@ -10,9 +10,7 @@ import java.util.UUID;
 public class Paragraph {
     
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(columnDefinition = "BINARY(16)")
+    @GeneratedValue
     private UUID id;
     
     @Column(nullable = false)
