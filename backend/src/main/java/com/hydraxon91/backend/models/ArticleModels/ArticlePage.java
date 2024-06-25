@@ -1,9 +1,11 @@
 package com.hydraxon91.backend.models.ArticleModels;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hydraxon91.backend.services.ArticleServices.ArticlePageService;
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,6 +25,9 @@ public class ArticlePage {
     private String roleNote;
     private String content;
 
+    @Column(unique = true)
+    private String slug;
+    
     @Column(nullable = true)
     private UUID categoryId;
 
@@ -48,6 +53,14 @@ public class ArticlePage {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+    
+    public void setSlug(String slug){
+        this.slug = slug;
     }
 
     public String getTitle() {
