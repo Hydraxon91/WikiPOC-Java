@@ -27,6 +27,10 @@ public class CategoryService {
         return categoryRepository.findByCategoryName(categoryName);
     }
 
+    public Optional<Category> getCategoryBySlug(String slug) {
+        return categoryRepository.findBySlug(slug);
+    }
+
     public Category addCategory(String categoryName) throws IllegalArgumentException {
         Optional<Category> existingCategory = getCategoryByName(categoryName);
         if (existingCategory.isPresent()) {
