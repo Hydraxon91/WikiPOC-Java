@@ -28,9 +28,19 @@ public class CategoryController {
         return ResponseEntity.ok(categories);
     }
 
-    @GetMapping("/{categoryName}")
+    @GetMapping("/getbyname/{categoryName}")
     public ResponseEntity<Category> getCategoryByName(@PathVariable String categoryName) {
         Optional<Category> category = categoryService.getCategoryByName(categoryName);
+        if (category.isPresent()) {
+            return ResponseEntity.ok(category.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/getbyslug/{slug}")
+    public ResponseEntity<Category> getCategoryBySlug(@PathVariable String slug) {
+        Optional<Category> category = categoryService.getCategoryByName(slug);
         if (category.isPresent()) {
             return ResponseEntity.ok(category.get());
         } else {
