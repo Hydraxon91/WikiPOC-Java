@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -27,13 +28,23 @@ public class ArticlePageController {
         return ResponseEntity.ok(articlePages);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/getbyid/{id}")
     public ResponseEntity<ArticlePage> getArticlePageById(@PathVariable UUID id) {
         ArticlePage articlePage = articlePageService.getArticlePageById(id);
         if (articlePage == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(articlePage);
+    }
+
+    @GetMapping("/getbyslug/{id}")
+    public ResponseEntity<ArticlePage> getArticlePageBySlug(@PathVariable String slug) {
+        Optional<ArticlePage> articlePage = articlePageService.getArticleBySlug(slug);
+        if (articlePage.isPresent()) {
+            return ResponseEntity.ok(articlePage.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
