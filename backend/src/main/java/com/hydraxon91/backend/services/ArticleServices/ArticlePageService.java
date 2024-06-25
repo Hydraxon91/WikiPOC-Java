@@ -31,6 +31,8 @@ public class ArticlePageService {
 
     public ArticlePage createArticlePage(ArticlePage articlePage) {
         // Implement creation logic, including saving paragraphs if needed
+        String slug = generateSlug(articlePage.getTitle());
+        articlePage.setSlug(slug);
         return articlePageRepository.save(articlePage);
     }
 
@@ -53,5 +55,21 @@ public class ArticlePageService {
     public List<Paragraph> getParagraphsByArticlePageId(UUID articlePageId) {
         // Implement method to fetch paragraphs by articlePageId
         return paragraphRepository.findByArticlePage_Id(articlePageId);
+    }
+
+    public String generateSlug(String title) {
+        String baseSlug = title.toLowerCase().replaceAll("\\s+", "-");
+        String finalSlug = baseSlug;
+        int suffix = 1;
+
+        while (isSlugExists(finalSlug)) {
+            finalSlug = baseSlug + "-" + suffix++;
+        }
+
+        return finalSlug;
+    }
+
+    public boolean isSlugExists(String slug) {
+        return articlePageRepository.existsBySlug(slug);
     }
 }
