@@ -1,7 +1,7 @@
 package com.hydraxon91.backend.controllers.usercontrollers;
 
-import com.hydraxon91.backend.models.UserModels.UserComment;
-import com.hydraxon91.backend.services.User.UserCommentService;
+import com.hydraxon91.backend.models.UserModels.Comment;
+import com.hydraxon91.backend.services.User.CommentService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,18 +16,18 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user-comments")
-public class UserCommentController {
+public class CommentController {
     
-    private final UserCommentService userCommentService;
+    private final CommentService commentService;
 
     @Autowired
-    public UserCommentController(UserCommentService userCommentService) {
-        this.userCommentService = userCommentService;
+    public CommentController(CommentService commentService) {
+        this.commentService = commentService;
     }
 
     @GetMapping("/get/{id}")
-    public ResponseEntity<UserComment> getComment(@PathVariable UUID id) {
-        Optional<UserComment> comment = userCommentService.getById(id);
+    public ResponseEntity<Comment> getComment(@PathVariable UUID id) {
+        Optional<Comment> comment = commentService.getById(id);
 
         if (comment.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -39,11 +39,11 @@ public class UserCommentController {
     @PutMapping("/comment/{id}")
     public ResponseEntity<?> editComment(@PathVariable UUID id, @RequestBody String updatedContent, Principal principal) {
         String userId = getUserIdFromPrincipal(principal);
-        UserComment existingComment = userCommentService.getById(id)
+        Comment existingComment = commentService.getById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
 
         if (isAuthorizedToEditOrDeleteComment(userId, existingComment)) {
-            userCommentService.update(id, updatedContent);
+            commentService.update(id, updatedContent);
             return ResponseEntity.ok().body("Comment edited successfully");
         }
 
@@ -53,11 +53,11 @@ public class UserCommentController {
     @DeleteMapping("/comment/{id}")
     public ResponseEntity<?> deleteComment(@PathVariable UUID id, Principal principal) {
         String userId = getUserIdFromPrincipal(principal);
-        UserComment existingComment = userCommentService.getById(id)
+        Comment existingComment = commentService.getById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
 
         if (isAuthorizedToEditOrDeleteComment(userId, existingComment)) {
-            userCommentService.delete(id);
+            commentService.delete(id);
             return ResponseEntity.ok().body("Comment deleted successfully");
         }
 
@@ -69,7 +69,7 @@ public class UserCommentController {
         return principal.getName();
     }
 
-    private boolean isAuthorizedToEditOrDeleteComment(String userId, UserComment comment) {
+    private boolean isAuthorizedToEditOrDeleteComment(String userId, Comment comment) {
         return userId.equals(comment.getUserProfile().getId().toString()) || isAdmin();
     }
 
