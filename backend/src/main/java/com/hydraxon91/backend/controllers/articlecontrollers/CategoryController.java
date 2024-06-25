@@ -38,7 +38,7 @@ public class CategoryController {
         }
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public ResponseEntity<Category> addCategory(@RequestBody String categoryName) {
         try {
@@ -49,7 +49,7 @@ public class CategoryController {
         }
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<Void> deleteCategory(@PathVariable UUID categoryId) {
         boolean result = categoryService.deleteCategory(categoryId);
