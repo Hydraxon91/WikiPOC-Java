@@ -17,13 +17,10 @@ const WikiPage = ({page: wikipage, setDecodedTitle, cookies, disableNavbar = fal
 
     useEffect(()=>{
         console.log(wikipage);
-        // if (wikipage && (wikipage.wikiPage || wikipage.userSubmittedWikiPage))  {
-        //     setActiveTab('wiki');
-        //     setPage(wikipage.wikiPage ?? wikipage.userSubmittedWikiPage);
-        //     setImages(wikipage.images)
-        // }
-        if (wikipage) {
-            setPage(wikipage)
+        if (wikipage && (wikipage.articlePage || wikipage.userSubmittedArticlePage))  {
+            setActiveTab('wiki');
+            setPage(wikipage.articlePage ?? wikipage.userSubmittedArticlePage);
+            setImages(wikipage.images)
         }
     },[wikipage])
 

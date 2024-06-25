@@ -1,22 +1,23 @@
 package com.hydraxon91.backend.models.ArticleModels;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+
 import java.util.UUID;
 import jakarta.persistence.Entity;
 
 @Entity
 public class UserSubmittedArticlePage extends ArticlePage{
-    
-    // Define foreign key and relationship with WikiPage
-    private UUID articlePageId;
+
+//    @Id
+//    @GeneratedValue
+//    private UUID userSubmittedArticlePageId;
+
+    @Column(nullable = true)
+    private UUID parentArticleId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "articlePageId", referencedColumnName = "id", foreignKey = @ForeignKey(name = "FK_user_submitted_article_page_article_page"))
+    @JoinColumn(name = "parentArticleId", referencedColumnName = "id", foreignKey = @ForeignKey(name = "FK_user_submitted_article_page_article_page"), insertable = false, updatable = false)
     @JsonIgnore
     private ArticlePage articlePage;
 
@@ -25,19 +26,19 @@ public class UserSubmittedArticlePage extends ArticlePage{
     private boolean isNewPage;
 
     // Constructors, getters, setters
-    public UUID getWikiPageId() {
-        return articlePageId;
-    }
+//    public UUID getUserSubmittedArticlePageId() {
+//        return userSubmittedArticlePageId;
+//    }
+//
+//    public void setUserSubmittedArticlePageId(UUID userSubmittedArticlePageId) {
+//        this.userSubmittedArticlePageId = userSubmittedArticlePageId;
+//    }
 
-    public void setWikiPageId(UUID articlePageId) {
-        this.articlePageId = articlePageId;
-    }
-
-    public ArticlePage getWikiPage() {
+    public ArticlePage getArticlePage() {
         return articlePage;
     }
 
-    public void setWikiPage(ArticlePage articlePage) {
+    public void setArticlePage(ArticlePage articlePage) {
         this.articlePage = articlePage;
     }
 

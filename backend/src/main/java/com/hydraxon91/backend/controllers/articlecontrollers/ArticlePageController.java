@@ -2,6 +2,7 @@ package com.hydraxon91.backend.controllers.articlecontrollers;
 
 import com.hydraxon91.backend.models.ArticleModels.ArticlePage;
 import com.hydraxon91.backend.models.ArticleModels.Paragraph;
+import com.hydraxon91.backend.models.Forms.WPWithImagesOutputModel;
 import com.hydraxon91.backend.services.ArticleServices.ArticlePageProjection;
 import com.hydraxon91.backend.services.ArticleServices.ArticlePageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,22 +37,27 @@ public class ArticlePageController {
     }
 
     @GetMapping("/getbyid/{id}")
-    public ResponseEntity<ArticlePage> getArticlePageById(@PathVariable UUID id) {
-        ArticlePage articlePage = articlePageService.getArticlePageById(id);
-        if (articlePage == null) {
+    public ResponseEntity<WPWithImagesOutputModel> getArticlePageById(@PathVariable UUID id) {
+        WPWithImagesOutputModel outputModel = new WPWithImagesOutputModel();
+        outputModel.setArticlePage(articlePageService.getArticlePageById(id));
+        if (outputModel.getArticlePage() == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(articlePage);
+        return ResponseEntity.ok(outputModel);
     }
 
     @GetMapping("/getbyslug/{slug}")
-    public ResponseEntity<ArticlePage> getArticlePageBySlug(@PathVariable String slug) {
-        Optional<ArticlePage> articlePage = articlePageService.getArticleBySlug(slug);
-        if (articlePage.isPresent()) {
-            return ResponseEntity.ok(articlePage.get());
-        } else {
+    public ResponseEntity<WPWithImagesOutputModel> getArticlePageBySlug(@PathVariable String slug) {
+        WPWithImagesOutputModel outputModel = new WPWithImagesOutputModel();
+        articlePageService.getArticleBySlug(slug).ifPresent(articlePage -> {
+            outputModel.setArticlePage(articlePage);
+            // You may add logic here to populate UserSubmittedArticlePage and Images if needed
+        });
+
+        if (outputModel.getArticlePage() == null) {
             return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok(outputModel);
     }
 
     @PostMapping
