@@ -10,6 +10,8 @@ const CategoryPageComponent = ({ pages, categories }) => {
 ;
   useEffect(() => {
     // Organize pages by category
+    console.log(categories);
+    console.log(pages);
     const pagesByCategory = {};
     pages.forEach(page => {
       const category = categories.includes(page.category) ? page.category : 'Uncategorized'; // Check if page category exists in categories

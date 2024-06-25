@@ -7,16 +7,15 @@ const HomeComponent = ({ pages, categories }) => {
   const {styles} = useStyleContext();
 
   useEffect(() => {
-    // Organize pages by category
-    const pagesByCategory = {};
-    pages.forEach(page => {
-      const category = categories.includes(page.category) ? page.category : 'Uncategorized'; // Check if page category exists in categories
-      if (!pagesByCategory[category]) {
-        pagesByCategory[category] = [];
-      }
-      pagesByCategory[category].push(page);
-    });
-    setPagesByCategory(pagesByCategory);
+    if (categories) {
+      // Organize pages by category
+      console.log(categories);
+      const pagesByCategory = {};
+      categories.forEach(category =>{
+        pagesByCategory[category.categoryName] = category.articlePages;
+        setPagesByCategory(pagesByCategory);
+      })
+    }
   }, [pages, categories]);
 
   return (
@@ -28,7 +27,7 @@ const HomeComponent = ({ pages, categories }) => {
           <ul>
             {pages.map((page, index) => (
               <li key={index}>
-                <Link to={`/page/${encodeURIComponent(page.title)}`}>
+                <Link to={`/page/${encodeURIComponent(page.slug)}`}>
                   {page.title}
                 </Link>
               </li>

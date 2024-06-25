@@ -1,7 +1,7 @@
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 export const getWikiPages = async () => {
-  const response = await fetch(`${BASE_URL}/api/WikiPages`);
+  const response = await fetch(`${BASE_URL}/api/article-pages`);
   if (!response.ok) {
     throw new Error(`Failed to get WikiPages. Status: ${response.status}`);
   }
@@ -9,15 +9,14 @@ export const getWikiPages = async () => {
   return data;
 };
 
-export const getWikiPageTitles = async () => {
-    const response = await fetch(`${BASE_URL}/api/WikiPages/GetTitles`, {
+export const getWikiPageTitlesAndSlugs = async () => {
+    const response = await fetch(`${BASE_URL}/api/article-pages/titles-and-slugs`, {
       method: 'GET',
     });
     if (!response.ok) {
       throw new Error(`Failed to get WikiPage Titles. Status: ${response.status}`);
     }
     const data = await response.json();
-    // console.log(data);
     return data;
   };
 
@@ -36,6 +35,16 @@ export const getWikiPageById = async (id) => {
       throw new Error(`Failed to get WikiPage. Status: ${response.status}`);
     }
     const data = await response.json();
+    return data;
+  };
+
+  export const getWikiPageBySlug = async (slug) => {
+    const response = await fetch(`${BASE_URL}/api/article-pages/getbyslug/${slug}`);
+    if (!response.ok) {
+      throw new Error(`Failed to get WikiPage. Status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log(data);
     return data;
   };
 
@@ -344,23 +353,19 @@ export const declineUserSubmittedWikiPage = async (id, token) =>{
 };
 
 export const fetchCategories = async () => {
-  const response = await fetch(`${BASE_URL}/api/Category`, {
+  const response = await fetch(`${BASE_URL}/api/categories`, {
     method: 'GET',
   });
   if (!response.ok) {
     throw new Error(`Failed to get Categories. Status: ${response.status}`);
   }
   const data = await response.json();
-  // console.log(data);
-  // const categoryNames = data.map(category => ({ id: category.id, categoryName: category.categoryName }));
-  // console.log(categoryNames);
-  // categoryNames.push("Uncategorized");
   return data;
 };
 
 
 export const addCategory = async (categoryName, token) => {
-  const response = await fetch(`${BASE_URL}/api/Category`, {
+  const response = await fetch(`${BASE_URL}/api/categories`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -379,7 +384,7 @@ export const addCategory = async (categoryName, token) => {
 };
 
 export const deleteCategory = async (categoryId, token) => {
-  const response = await fetch(`${BASE_URL}/api/Category/${categoryId}`, {
+  const response = await fetch(`${BASE_URL}/api/categories/${categoryId}`, {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${token}`,
