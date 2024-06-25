@@ -9,7 +9,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-public class UserComment {
+@Table(name = "comments")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE) // Choose appropriate strategy
+@DiscriminatorColumn(name = "comment_type", discriminatorType = DiscriminatorType.STRING)
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID uuid;
@@ -29,18 +32,18 @@ public class UserComment {
     @ManyToOne
     @JoinColumn(name = "reply_to_comment_id")
     @JsonIgnore
-    private UserComment replyToComment;
+    private Comment replyToComment;
 
     @Column(name = "reply_to_comment_id", insertable = false, updatable = false)
     private UUID replyToCommentId;
 
     @OneToMany(mappedBy = "replyToComment", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserComment> replies = new ArrayList<>();
+    private List<Comment> replies = new ArrayList<>();
 
     private boolean isEdited = false;
 
     // Required no-argument constructor
-    public UserComment() {
+    public Comment() {
     }
 
     // Getters and Setters
@@ -85,11 +88,11 @@ public class UserComment {
         this.postDate = postDate;
     }
 
-    public UserComment getReplyToComment() {
+    public Comment getReplyToComment() {
         return replyToComment;
     }
 
-    public void setReplyToComment(UserComment replyToComment) {
+    public void setReplyToComment(Comment replyToComment) {
         this.replyToComment = replyToComment;
     }
 
@@ -101,11 +104,11 @@ public class UserComment {
         this.replyToCommentId = replyToCommentId;
     }
 
-    public List<UserComment> getReplies() {
+    public List<Comment> getReplies() {
         return replies;
     }
 
-    public void setReplies(List<UserComment> replies) {
+    public void setReplies(List<Comment> replies) {
         this.replies = replies;
     }
 
