@@ -1,12 +1,14 @@
 package com.hydraxon91.backend.services.ArticleServices;
 
 import com.hydraxon91.backend.models.ArticleModels.ArticlePage;
+import com.hydraxon91.backend.models.ArticleModels.Category;
 import com.hydraxon91.backend.models.ArticleModels.Paragraph;
 import com.hydraxon91.backend.repositories.ArticleRepositories.ArticlePageRepository;
 import com.hydraxon91.backend.repositories.ArticleRepositories.ParagraphRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -27,6 +29,10 @@ public class ArticlePageService {
 
     public ArticlePage getArticlePageById(UUID id) {
         return articlePageRepository.findById(id).orElse(null);
+    }
+
+    public Optional<ArticlePage> getArticleBySlug(String slug) {
+        return articlePageRepository.findBySlug(slug);
     }
 
     public ArticlePage createArticlePage(ArticlePage articlePage) {
