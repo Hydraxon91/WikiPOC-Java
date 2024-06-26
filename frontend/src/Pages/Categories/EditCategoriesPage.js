@@ -12,6 +12,7 @@ const EditCategoriesPage = ({ setAppCategories, cookies }) => {
     useEffect(() => {
       fetchCategories()
           .then(async categories => {
+            console.log(categories);
             setCategories(categories);
           })
           .catch(error => {
@@ -43,9 +44,8 @@ const EditCategoriesPage = ({ setAppCategories, cookies }) => {
             const addedCategory = await addCategory(newCategory, cookies);
             if (addedCategory) {
                 const updatedCategories = [...categories, addedCategory];
-                const updatedCategorieNames = updatedCategories.map(category => category.categoryName);
                 setCategories(updatedCategories);
-                setAppCategories(updatedCategorieNames);
+                setAppCategories(updatedCategories);
                 setPagesByCategory({ ...pagesByCategory, [addedCategory.id]: 0 });
             } else {
                 console.error(`Failed to add category ${newCategory}.`);
@@ -59,12 +59,11 @@ const EditCategoriesPage = ({ setAppCategories, cookies }) => {
         try {
             const categoryId = category.id;
             const status = await deleteCategory(categoryId, cookies);
-            if (status === 204) {
+            if (status === 204 || status === 200) {
                 console.log(`Category ${category.name} deleted successfully.`);
                 const updatedCategories = categories.filter(cat => cat.id !== categoryId);
-                const updatedCategorieNames = updatedCategories.map(category => category.categoryName);
                 setCategories(updatedCategories);
-                setAppCategories(updatedCategorieNames);
+                setAppCategories(updatedCategories);
                 const { [categoryId]: _, ...updatedPagesByCategory } = pagesByCategory;
                 setPagesByCategory(updatedPagesByCategory);
             } else {
@@ -83,7 +82,6 @@ const EditCategoriesPage = ({ setAppCategories, cookies }) => {
                     <li key={index}>
                         <div className='category-row'>
                             <span>{category.categoryName}</span>
-                            {console.log(pagesByCategory)}
                             {pagesByCategory[category.id] === 0 && (
                                 <button onClick={() => handleDeleteCategory(category)}>Delete Category</button>
                             )}

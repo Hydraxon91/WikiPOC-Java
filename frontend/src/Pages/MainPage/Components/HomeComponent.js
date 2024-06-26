@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useStyleContext } from '../../../Components/contexts/StyleContext';
 import { fetchPagesForAllCategories } from '../../../Api/wikiApi';
 
-const HomeComponent = ({ pages, categories }) => {
+const HomeComponent = ({ categories }) => {
   const [pagesByCategory, setPagesByCategory] = useState({});
   const { styles } = useStyleContext();
 

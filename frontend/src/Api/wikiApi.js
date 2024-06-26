@@ -364,6 +364,7 @@ export const fetchCategories = async () => {
 };
 
 export const fetchPagesForAllCategories = async (categories) => {
+  console.log(categories);
   const pagesByCategory = {};
   // Fetch pages for each category
   await Promise.all(categories.map(async (category) => {
