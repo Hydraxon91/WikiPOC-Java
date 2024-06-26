@@ -38,6 +38,12 @@ public class CategoryController {
         return articlePageService.findArticlePagesByCategoryId(categoryId);
     }
 
+    @GetMapping("/{categoryId}/articlePages/count")
+    public ResponseEntity<Long> getArticlePageCountByCategoryId(@PathVariable UUID categoryId) {
+        long count = articlePageService.countArticlePagesByCategoryId(categoryId);
+        return ResponseEntity.ok(count);
+    }
+
     @GetMapping("/getbyname/{categoryName}")
     public ResponseEntity<Category> getCategoryByName(@PathVariable String categoryName) {
         Optional<Category> category = categoryService.getCategoryByName(categoryName);

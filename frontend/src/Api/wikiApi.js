@@ -363,17 +363,34 @@ export const fetchCategories = async () => {
   return data;
 };
 
-export const fetchPagesByCategory = async (categories, setPagesByCategory) => {
+export const fetchPagesForAllCategories = async (categories) => {
   const pagesByCategory = {};
   // Fetch pages for each category
   await Promise.all(categories.map(async (category) => {
     const response = await fetch(`${BASE_URL}/api/categories/${category.id}/articlePages`);
     const pages = await response.json();
-    console.log(pages);
     pagesByCategory[category.categoryName] = pages;
   }));
-  setPagesByCategory(pagesByCategory);
+  return pagesByCategory;
 }
+
+export const fetchPagesByCategory = async (category) => {
+  const pagesByCategory = {};
+  // Fetch pages for each category
+  const response = await fetch(`${BASE_URL}/api/categories/${category}/articlePages`);
+  const pages = await response.json(); 
+  pagesByCategory[category] = pages;
+  return pagesByCategory;
+}
+
+export const fetchPagesCountByCategory = async (categoryId) => {
+  const response = await fetch(`${BASE_URL}/api/categories/${categoryId}/articlePages/count`);
+  if (!response.ok) {
+      throw new Error('Failed to fetch page count');
+  }
+  const count = await response.json();
+  return count;
+};
 
 export const addCategory = async (categoryName, token) => {
   const response = await fetch(`${BASE_URL}/api/categories`, {

@@ -38,6 +38,10 @@ public class ArticlePageService {
         return articlePageRepository.findByCategoryId(categoryId);
     }
 
+    public long countArticlePagesByCategoryId(UUID categoryId) {
+        return articlePageRepository.countByCategoryId(categoryId);
+    }
+
     public List<ArticlePageProjection> getArticleTitlesAndSlugs() {
         return articlePageRepository.findArticleTitlesAndSlugs();
     }
