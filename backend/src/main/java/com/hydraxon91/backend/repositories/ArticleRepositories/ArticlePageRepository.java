@@ -14,6 +14,7 @@ import java.util.UUID;
 public interface ArticlePageRepository extends JpaRepository<ArticlePage, UUID> {
     boolean existsBySlug(String slug);
     Optional<ArticlePage> findBySlug(String slug);
+    List<ArticlePage> findByCategoryId(UUID categoryId);
     
     @Query("SELECT ap.title AS title, ap.slug AS slug FROM ArticlePage ap")
     List<ArticlePageProjection> findArticleTitlesAndSlugs();

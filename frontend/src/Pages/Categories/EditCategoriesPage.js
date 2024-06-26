@@ -24,12 +24,9 @@ const EditCategoriesPage = ({ setAppCategories, cookies }) => {
     };
   
     const handleAddCategory = async () => {
-        console.log(newCategory);
         try{
             const addedCategory = await addCategory(newCategory, cookies);
             if (addedCategory) {
-                console.log(`Category ${newCategory} added successfully.`);
-
                 const updatedCategories = [...categories, addedCategory];
                 const updatedCategorieNames = updatedCategories.map(category => category.categoryName);
                 setCategories(updatedCategories);
@@ -70,7 +67,7 @@ const EditCategoriesPage = ({ setAppCategories, cookies }) => {
             <li key={index}>
               <div className='category-row'>
                 <span>{category.categoryName}</span>
-                {category.wikiPages.length ==0 && <button onClick={() => handleDeleteCategory(category)}>Delete Category</button>}
+                {category.articlePages.length ==0 && <button onClick={() => handleDeleteCategory(category)}>Delete Category</button>}
               </div>
             </li>
           ))}

@@ -1,6 +1,8 @@
 package com.hydraxon91.backend.controllers.articlecontrollers;
 
+import com.hydraxon91.backend.models.ArticleModels.ArticlePage;
 import com.hydraxon91.backend.models.ArticleModels.Category;
+import com.hydraxon91.backend.services.ArticleServices.ArticlePageService;
 import com.hydraxon91.backend.services.ArticleServices.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
+    
+    @Autowired
+    private ArticlePageService articlePageService;
 
     private final CategoryService categoryService;
 
@@ -28,6 +33,11 @@ public class CategoryController {
         return ResponseEntity.ok(categories);
     }
 
+    @GetMapping("/{categoryId}/articlePages")
+    public List<ArticlePage> getArticlePagesByCategoryId(@PathVariable UUID categoryId) {
+        return articlePageService.findArticlePagesByCategoryId(categoryId);
+    }
+
     @GetMapping("/getbyname/{categoryName}")
     public ResponseEntity<Category> getCategoryByName(@PathVariable String categoryName) {
         Optional<Category> category = categoryService.getCategoryByName(categoryName);
@@ -40,7 +50,7 @@ public class CategoryController {
 
     @GetMapping("/getbyslug/{slug}")
     public ResponseEntity<Category> getCategoryBySlug(@PathVariable String slug) {
-        Optional<Category> category = categoryService.getCategoryByName(slug);
+        Optional<Category> category = categoryService.getCategoryBySlug(slug);
         if (category.isPresent()) {
             return ResponseEntity.ok(category.get());
         } else {

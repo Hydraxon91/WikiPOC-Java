@@ -34,6 +34,10 @@ public class ArticlePageService {
         return articlePageRepository.findBySlug(slug);
     }
 
+    public List<ArticlePage> findArticlePagesByCategoryId(UUID categoryId) {
+        return articlePageRepository.findByCategoryId(categoryId);
+    }
+
     public List<ArticlePageProjection> getArticleTitlesAndSlugs() {
         return articlePageRepository.findArticleTitlesAndSlugs();
     }

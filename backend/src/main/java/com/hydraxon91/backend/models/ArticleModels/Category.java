@@ -1,5 +1,6 @@
 package com.hydraxon91.backend.models.ArticleModels;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -24,8 +25,9 @@ public class Category {
 
     @Column(unique = true)
     private String slug;
-
+    
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<ArticlePage> articlePages = new ArrayList<>();
 
     // Getters and setters

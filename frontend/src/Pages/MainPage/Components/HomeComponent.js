@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { StyleProvider, useStyleContext } from '../../../Components/contexts/StyleContext';
+import { fetchPagesByCategory } from '../../../Api/wikiApi';
 
 const HomeComponent = ({ pages, categories }) => {
   const [pagesByCategory, setPagesByCategory] = useState({});
@@ -8,13 +9,7 @@ const HomeComponent = ({ pages, categories }) => {
 
   useEffect(() => {
     if (categories) {
-      // Organize pages by category
-      console.log(categories);
-      const pagesByCategory = {};
-      categories.forEach(category =>{
-        pagesByCategory[category.categoryName] = category.articlePages;
-        setPagesByCategory(pagesByCategory);
-      })
+      fetchPagesByCategory(categories, setPagesByCategory);
     }
   }, [pages, categories]);
 
