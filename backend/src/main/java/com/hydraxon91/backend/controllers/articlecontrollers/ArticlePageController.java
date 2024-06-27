@@ -3,15 +3,19 @@ package com.hydraxon91.backend.controllers.articlecontrollers;
 import com.hydraxon91.backend.models.ArticleModels.ArticlePage;
 import com.hydraxon91.backend.models.ArticleModels.ArticlePageTitleAndIdProjection;
 import com.hydraxon91.backend.models.ArticleModels.Paragraph;
+import com.hydraxon91.backend.models.Forms.ArticlePageWithImagesInputModel;
 import com.hydraxon91.backend.models.Forms.ImageFormModel;
 import com.hydraxon91.backend.models.Forms.WPWithImagesOutputModel;
 import com.hydraxon91.backend.services.ArticleServices.ArticlePageProjection;
 import com.hydraxon91.backend.services.ArticleServices.ArticlePageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,6 +25,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/article-pages")
 public class ArticlePageController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ArticlePageController.class);
 
     private final ArticlePageService articlePageService;
 
@@ -43,26 +49,30 @@ public class ArticlePageController {
 
     @GetMapping("/getbyid/{id}")
     public ResponseEntity<WPWithImagesOutputModel> getArticlePageById(@PathVariable UUID id) {
-        WPWithImagesOutputModel outputModel = new WPWithImagesOutputModel();
-        outputModel.setArticlePage(articlePageService.getArticlePageById(id));
-        if (outputModel.getArticlePage() == null) {
-            return ResponseEntity.notFound().build();
+        try {
+            WPWithImagesOutputModel outputModel = articlePageService.getArticlePageById(id);
+            if (outputModel == null || outputModel.getArticlePage() == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(outputModel);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle or log the exception appropriately
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return ResponseEntity.ok(outputModel);
     }
 
     @GetMapping("/getbyslug/{slug}")
     public ResponseEntity<WPWithImagesOutputModel> getArticlePageBySlug(@PathVariable String slug) {
-        WPWithImagesOutputModel outputModel = new WPWithImagesOutputModel();
-        articlePageService.getArticleBySlug(slug).ifPresent(articlePage -> {
-            outputModel.setArticlePage(articlePage);
-            // You may add logic here to populate UserSubmittedArticlePage and Images if needed
-        });
-
-        if (outputModel.getArticlePage() == null) {
-            return ResponseEntity.notFound().build();
+        try {
+            WPWithImagesOutputModel outputModel = articlePageService.getArticleBySlug(slug);
+            if (outputModel == null || outputModel.getArticlePage() == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(outputModel);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle or log the exception appropriately
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return ResponseEntity.ok(outputModel);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -93,13 +103,35 @@ public class ArticlePageController {
         return ResponseEntity.ok(titlesAndIds);
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<ArticlePage> createArticlePage(@RequestBody ArticlePage articlePage, @RequestPart("images") List<ImageFormModel> images) {
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/addAdmin")
+    public ResponseEntity<ArticlePage> createArticlePageAdmin(
+            @ModelAttribute ArticlePageWithImagesInputModel inputModel) {
         try {
-            ArticlePage createdArticlePage = articlePageService.createArticlePage(articlePage, images);
+            if (inputModel.getImages() != null) {
+                for (ImageFormModel image : inputModel.getImages()) {
+                    logger.info("Received image: {}", image); // Adjust the logging format as per your ImageFormModel
+                }
+            }
+            
+            ArticlePage createdArticlePage = articlePageService.createArticlePageAdmin(inputModel);
             return ResponseEntity.ok(createdArticlePage);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
+            logger.error("Error creating article page", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @PostMapping("/addUser")
+    public ResponseEntity<ArticlePage> createArticlePageUser(
+            @ModelAttribute ArticlePageWithImagesInputModel inputModel) {
+        try {
+            ArticlePage createdArticlePage = articlePageService.createArticlePageUser(inputModel);
+            return ResponseEntity.ok(createdArticlePage);
+        } catch (Exception e) {
+            logger.error("Error creating article page", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -107,15 +139,16 @@ public class ArticlePageController {
     @PutMapping("/update/{id}")
     public ResponseEntity<ArticlePage> updateArticlePage(
             @PathVariable UUID id,
-            @RequestPart("articlePage") ArticlePage articlePage,
-            @RequestPart("images") List<ImageFormModel> images) {
+            @ModelAttribute ArticlePageWithImagesInputModel inputModel) {
         try {
-            ArticlePage updatedArticlePage = articlePageService.updateArticlePage(id, articlePage, images);
+            ArticlePage updatedArticlePage = articlePageService.updateArticlePage(id, inputModel);
             return ResponseEntity.ok(updatedArticlePage);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(404).body(null);
+            logger.error("Error updating article page with id: " + id, e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (IOException e) {
-            return ResponseEntity.status(500).body(null);
+            logger.error("IO Exception while updating article page with id: " + id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 

@@ -3,21 +3,24 @@ package com.hydraxon91.backend.services.ArticleServices;
 import com.hydraxon91.backend.models.ArticleModels.ArticlePage;
 import com.hydraxon91.backend.models.ArticleModels.ArticlePageTitleAndIdProjection;
 import com.hydraxon91.backend.models.ArticleModels.Paragraph;
+import com.hydraxon91.backend.models.Forms.ArticlePageWithImagesInputModel;
 import com.hydraxon91.backend.models.Forms.ImageFormModel;
+import com.hydraxon91.backend.models.Forms.WPWithImagesOutputModel;
 import com.hydraxon91.backend.repositories.ArticleRepositories.ArticlePageRepository;
 import com.hydraxon91.backend.repositories.ArticleRepositories.ParagraphRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +29,9 @@ public class ArticlePageService {
     private final ArticlePageRepository articlePageRepository;
     private final ParagraphRepository paragraphRepository;
 
+    @Value("${pictures.path-container}")
+    private String picturesPathContainer;
+
     @Autowired
     public ArticlePageService(ArticlePageRepository articlePageRepository, ParagraphRepository paragraphRepository) {
         this.articlePageRepository = articlePageRepository;
@@ -33,7 +39,7 @@ public class ArticlePageService {
     }
 
     public List<ArticlePage> getAllArticlePages() {
-        return articlePageRepository.findByApprovedIsTrueOrApprovedIsNull();
+        return articlePageRepository.findByApprovedIsTrue();
     }
 
     public List<ArticlePage> getUnapprovedUserSubmittedNewPages() {
@@ -52,12 +58,30 @@ public class ArticlePageService {
         return articlePageRepository.findTitlesAndIdsByApprovedIsFalseAndIsNewPageFalse();
     }
 
-    public ArticlePage getArticlePageById(UUID id) {
-        return articlePageRepository.findById(id).orElse(null);
+    public WPWithImagesOutputModel getArticlePageById(UUID id) throws IOException {
+        ArticlePage articlePage = articlePageRepository.findById(id)
+                .orElseThrow(() -> new IOException("ArticlePage not found with id: " + id));
+
+        List<ImageFormModel> images = fetchImagesForArticlePage(articlePage);
+
+        WPWithImagesOutputModel wpWithImagesOutputModel = new WPWithImagesOutputModel();
+        wpWithImagesOutputModel.setArticlePage(articlePage);
+        wpWithImagesOutputModel.setImages(images);
+
+        return wpWithImagesOutputModel;
     }
 
-    public Optional<ArticlePage> getArticleBySlug(String slug) {
-        return articlePageRepository.findBySlug(slug);
+    public WPWithImagesOutputModel getArticleBySlug(String slug) throws IOException {
+        ArticlePage articlePage = articlePageRepository.findBySlug(slug)
+                .orElseThrow(() -> new IOException("ArticlePage not found with slug: " + slug));
+
+        List<ImageFormModel> images = fetchImagesForArticlePage(articlePage);
+
+        WPWithImagesOutputModel wpWithImagesOutputModel = new WPWithImagesOutputModel();
+        wpWithImagesOutputModel.setArticlePage(articlePage);
+        wpWithImagesOutputModel.setImages(images);
+
+        return wpWithImagesOutputModel;
     }
 
     public List<ArticlePage> findArticlePagesByCategoryId(UUID categoryId) {
@@ -72,13 +96,19 @@ public class ArticlePageService {
         return articlePageRepository.findArticleTitlesAndSlugs();
     }
 
-    public ArticlePage createArticlePage(ArticlePage articlePage, List<ImageFormModel> images) throws IOException {
+    @Transactional(rollbackFor = Exception.class)
+    public ArticlePage createArticlePageAdmin(ArticlePageWithImagesInputModel inputModel) throws IOException {
+        ArticlePage articlePage = inputModel.getArticlePage();
+
         // Save the article page
         String slug = generateSlug(articlePage.getTitle());
         articlePage.setSlug(slug);
+        articlePage.setApproved(true);
+        articlePage.setNewPage(false);
         articlePage = articlePageRepository.save(articlePage);
 
         // Save the images
+        Collection<ImageFormModel> images = inputModel.getImages();
         if (images != null && !images.isEmpty()) {
             for (ImageFormModel image : images) {
                 saveImage(image, articlePage.getId());
@@ -87,7 +117,31 @@ public class ArticlePageService {
         return articlePage;
     }
 
-    public ArticlePage updateArticlePage(UUID id, ArticlePage updatedArticlePage, List<ImageFormModel> images) throws IOException {
+    @Transactional(rollbackFor = Exception.class)
+    public ArticlePage createArticlePageUser(ArticlePageWithImagesInputModel inputModel) throws IOException {
+        ArticlePage articlePage = inputModel.getArticlePage();
+
+        // Save the article page
+        String slug = generateSlug(articlePage.getTitle());
+        articlePage.setSlug(slug);
+        articlePage.setApproved(false);
+        articlePage = articlePageRepository.save(articlePage);
+        
+        // Save the images
+        Collection<ImageFormModel> images = inputModel.getImages();
+        if (images != null && !images.isEmpty()) {
+            for (ImageFormModel image : images) {
+                saveImage(image, articlePage.getId());
+            }
+        }
+        
+        return articlePage;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public ArticlePage updateArticlePage(UUID id, ArticlePageWithImagesInputModel inputModel) throws IOException {
+        ArticlePage updatedArticlePage = inputModel.getArticlePage();
+
         // Retrieve the existing ArticlePage
         Optional<ArticlePage> existingArticlePageOpt = articlePageRepository.findById(id);
 
@@ -101,7 +155,7 @@ public class ArticlePageService {
             // Add more fields as needed
 
             // Handle the updating and saving of images
-            String directoryPath = System.getenv("PICTURES_PATH_CONTAINER") + "/articles/" + existingArticlePage.getId();
+            String directoryPath = picturesPathContainer + "/articles/" + existingArticlePage.getId();
             File directory = new File(directoryPath);
             if (!directory.exists()) {
                 directory.mkdirs();
@@ -111,12 +165,13 @@ public class ArticlePageService {
             List<String> existingFiles = Arrays.asList(directory.list());
 
             // Get the list of new image filenames
+            Collection<ImageFormModel> images = inputModel.getImages();
             List<String> newImageFiles = images.stream().map(ImageFormModel::getFileName).collect(Collectors.toList());
 
             // Delete unused images
             deleteUnusedImages(existingFiles, newImageFiles, directoryPath);
 
-            // Save new images
+            // Save the images
             if (images != null && !images.isEmpty()) {
                 for (ImageFormModel image : images) {
                     saveImage(image, existingArticlePage.getId());
@@ -134,7 +189,7 @@ public class ArticlePageService {
         Optional<ArticlePage> existingArticlePageOpt = articlePageRepository.findById(id);
         if (existingArticlePageOpt.isPresent()) {
             ArticlePage existingArticlePage = existingArticlePageOpt.get();
-            String directoryPath = System.getenv("PICTURES_PATH_CONTAINER") + "/articles/" + existingArticlePage.getId();
+            String directoryPath = picturesPathContainer + "/articles/" + existingArticlePage.getId();
             File directory = new File(directoryPath);
             if (directory.exists()) {
                 // List existing files in the directory
@@ -176,7 +231,7 @@ public class ArticlePageService {
     }
 
     private void saveImage(ImageFormModel image, UUID articlePageId) throws IOException {
-        String directoryPath = System.getenv("PICTURES_PATH_CONTAINER") + "/articles/" + articlePageId;
+        String directoryPath = picturesPathContainer + "/articles/" + articlePageId;
         File directory = new File(directoryPath);
         if (!directory.exists()) {
             directory.mkdirs();
@@ -195,5 +250,38 @@ public class ArticlePageService {
                 Files.deleteIfExists(new File(directoryPath, existingFile).toPath());
             }
         }
+    }
+
+    private List<ImageFormModel> fetchImagesForArticlePage(ArticlePage articlePage) throws IOException {
+        String directoryPath = picturesPathContainer + "/articles/" + articlePage.getId();
+        File directory = new File(directoryPath);
+        if (directory.exists()) {
+            File[] imageFiles = directory.listFiles();
+            if (imageFiles != null) {
+                return Arrays.stream(imageFiles)
+                        .map(file -> {
+                            try {
+                                byte[] imageData = Files.readAllBytes(file.toPath());
+                                String fileName = file.getName();
+                                // Get file extension without using FilenameUtils
+                                String extension = StringUtils.getFilenameExtension(fileName);
+
+                                // Construct dataURL
+                                String dataURL = "data:image/" + extension + ";base64,"
+                                        + Base64.getEncoder().encodeToString(imageData);
+                                ImageFormModel imageFormModel = new ImageFormModel();
+                                imageFormModel.setFileName(fileName);
+                                imageFormModel.setDataURL(dataURL);
+                                return imageFormModel;
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                return null;
+                            }
+                        })
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+            }
+        }
+        return Collections.emptyList();
     }
 }
