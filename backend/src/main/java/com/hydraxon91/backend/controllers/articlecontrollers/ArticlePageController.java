@@ -1,6 +1,7 @@
 package com.hydraxon91.backend.controllers.articlecontrollers;
 
 import com.hydraxon91.backend.models.ArticleModels.ArticlePage;
+import com.hydraxon91.backend.models.ArticleModels.ArticlePageTitleAndIdProjection;
 import com.hydraxon91.backend.models.ArticleModels.Paragraph;
 import com.hydraxon91.backend.models.Forms.ImageFormModel;
 import com.hydraxon91.backend.models.Forms.WPWithImagesOutputModel;
@@ -9,6 +10,7 @@ import com.hydraxon91.backend.services.ArticleServices.ArticlePageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -63,6 +65,34 @@ public class ArticlePageController {
         return ResponseEntity.ok(outputModel);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/unapproved-new-pages")
+    public ResponseEntity<List<ArticlePage>> getUnapprovedUserSubmittedNewPages() {
+        List<ArticlePage> pages = articlePageService.getUnapprovedUserSubmittedNewPages();
+        return ResponseEntity.ok(pages);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/unapproved-updates")
+    public ResponseEntity<List<ArticlePage>> getUnapprovedUserSubmittedUpdates() {
+        List<ArticlePage> pages = articlePageService.getUnapprovedUserSubmittedUpdates();
+        return ResponseEntity.ok(pages);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/unapproved-new-page-titles")
+    public ResponseEntity<List<ArticlePageTitleAndIdProjection>> getUnapprovedNewPageTitlesAndIds() {
+        List<ArticlePageTitleAndIdProjection> titlesAndIds = articlePageService.getUnapprovedNewPageTitlesAndIds();
+        return ResponseEntity.ok(titlesAndIds);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/unapproved-update-titles")
+    public ResponseEntity<List<ArticlePageTitleAndIdProjection>> getUnapprovedUpdateTitlesAndIds() {
+        List<ArticlePageTitleAndIdProjection> titlesAndIds = articlePageService.getUnapprovedUpdateTitlesAndIds();
+        return ResponseEntity.ok(titlesAndIds);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<ArticlePage> createArticlePage(@RequestBody ArticlePage articlePage, @RequestPart("images") List<ImageFormModel> images) {
         try {
@@ -73,6 +103,7 @@ public class ArticlePageController {
         }
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/update/{id}")
     public ResponseEntity<ArticlePage> updateArticlePage(
             @PathVariable UUID id,
@@ -88,6 +119,7 @@ public class ArticlePageController {
         }
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteArticlePage(@PathVariable UUID id) {
         boolean deleted = articlePageService.deleteArticlePage(id);

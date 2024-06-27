@@ -1,6 +1,7 @@
 package com.hydraxon91.backend.services.ArticleServices;
 
 import com.hydraxon91.backend.models.ArticleModels.ArticlePage;
+import com.hydraxon91.backend.models.ArticleModels.ArticlePageTitleAndIdProjection;
 import com.hydraxon91.backend.models.ArticleModels.Paragraph;
 import com.hydraxon91.backend.models.Forms.ImageFormModel;
 import com.hydraxon91.backend.repositories.ArticleRepositories.ArticlePageRepository;
@@ -33,6 +34,22 @@ public class ArticlePageService {
 
     public List<ArticlePage> getAllArticlePages() {
         return articlePageRepository.findByApprovedIsTrueOrApprovedIsNull();
+    }
+
+    public List<ArticlePage> getUnapprovedUserSubmittedNewPages() {
+        return articlePageRepository.findByApprovedIsFalseAndIsNewPageTrue();
+    }
+
+    public List<ArticlePage> getUnapprovedUserSubmittedUpdates() {
+        return articlePageRepository.findByApprovedIsFalseAndIsNewPageFalse();
+    }
+    
+    public List<ArticlePageTitleAndIdProjection> getUnapprovedNewPageTitlesAndIds() {
+        return articlePageRepository.findTitlesAndIdsByApprovedIsFalseAndIsNewPageTrue();
+    }
+
+    public List<ArticlePageTitleAndIdProjection> getUnapprovedUpdateTitlesAndIds() {
+        return articlePageRepository.findTitlesAndIdsByApprovedIsFalseAndIsNewPageFalse();
     }
 
     public ArticlePage getArticlePageById(UUID id) {
