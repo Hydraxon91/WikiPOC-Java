@@ -2,6 +2,7 @@ package com.hydraxon91.backend.controllers.articlecontrollers;
 
 import com.hydraxon91.backend.models.ArticleModels.ArticlePage;
 import com.hydraxon91.backend.models.ArticleModels.Paragraph;
+import com.hydraxon91.backend.models.Forms.ImageFormModel;
 import com.hydraxon91.backend.models.Forms.WPWithImagesOutputModel;
 import com.hydraxon91.backend.services.ArticleServices.ArticlePageProjection;
 import com.hydraxon91.backend.services.ArticleServices.ArticlePageService;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -60,21 +63,29 @@ public class ArticlePageController {
         return ResponseEntity.ok(outputModel);
     }
 
-    @PostMapping
-    public ResponseEntity<ArticlePage> createArticlePage(@RequestBody ArticlePage articlePage) {
-        ArticlePage createdArticlePage = articlePageService.createArticlePage(articlePage);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdArticlePage);
+    @PostMapping("/add")
+    public ResponseEntity<ArticlePage> createArticlePage(@RequestBody ArticlePage articlePage, @RequestPart("images") List<ImageFormModel> images) {
+        try {
+            ArticlePage createdArticlePage = articlePageService.createArticlePage(articlePage, images);
+            return ResponseEntity.ok(createdArticlePage);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ArticlePage> updateArticlePage(@PathVariable UUID id, @RequestBody ArticlePage updatedArticlePage) {
-        ArticlePage existingArticlePage = articlePageService.getArticlePageById(id);
-        if (existingArticlePage == null) {
-            return ResponseEntity.notFound().build();
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ArticlePage> updateArticlePage(
+            @PathVariable UUID id,
+            @RequestPart("articlePage") ArticlePage articlePage,
+            @RequestPart("images") List<ImageFormModel> images) {
+        try {
+            ArticlePage updatedArticlePage = articlePageService.updateArticlePage(id, articlePage, images);
+            return ResponseEntity.ok(updatedArticlePage);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body(null);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body(null);
         }
-        updatedArticlePage.setId(id);
-        ArticlePage savedArticlePage = articlePageService.updateArticlePage(id, updatedArticlePage);
-        return ResponseEntity.ok(savedArticlePage);
     }
 
     @DeleteMapping("/{id}")
