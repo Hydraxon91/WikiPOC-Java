@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { format, parseISO  } from 'date-fns';
+import { format  } from 'date-fns';
 import WikiPageReplyComponent from './WikiPageReplyComponent';
 import DisplayProfileImageElement from '../../ProfilePage/Components/DisplayProfileImageElement';
 
@@ -8,7 +8,7 @@ const UserCommentComponent = ({ comment, user, cookies, handleCommentSubmit, pos
     const [editingCommentIndex, setEditingCommentIndex] = useState(null);
     const [editedComment, setEditedComment] = useState("");
     const [showReplyBox, setShowReplyBox] = useState(false);
-
+    
     const handleEditClick = (initialContent) => {
         setEditingCommentIndex(comment.id);
         setEditedComment(initialContent);
@@ -26,20 +26,8 @@ const UserCommentComponent = ({ comment, user, cookies, handleCommentSubmit, pos
     };
 
     const formatDate = (dateString) => {
-        // Create a Date object from the input date string (assuming dateString is in ISO 8601 format)
         const date = new Date(dateString);
-
-        // Get the components of the date (year, month, day, hour, minute)
-        const year = date.getFullYear();
-        const month = ('0' + (date.getMonth() + 1)).slice(-2); // Months are zero indexed
-        const day = ('0' + date.getDate()).slice(-2);
-        const hours = ('0' + date.getHours()).slice(-2);
-        const minutes = ('0' + date.getMinutes()).slice(-2);
-
-        // Construct the formatted date string
-        const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
-
-        return formattedDate;
+        return format(date, 'yyyy-MM-dd HH:mm'); // Format the date as desired
     };
 
     return (
