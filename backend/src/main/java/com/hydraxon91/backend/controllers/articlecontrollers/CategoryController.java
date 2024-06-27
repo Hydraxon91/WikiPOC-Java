@@ -38,6 +38,12 @@ public class CategoryController {
         return articlePageService.findArticlePagesByCategoryId(categoryId);
     }
 
+    @GetMapping("/{categorySlug}/approvedNotArchivedArticlePages")
+    public ResponseEntity<List<ArticlePage>> getApprovedPagesByCategory(@PathVariable String categorySlug) {
+        List<ArticlePage> approvedPages = articlePageService.findApprovedAndNotArchivedPagesByCategoryId(categorySlug);
+        return ResponseEntity.ok(approvedPages);
+    }
+
     @GetMapping("/{categoryId}/articlePages/count")
     public ResponseEntity<Long> getArticlePageCountByCategoryId(@PathVariable UUID categoryId) {
         long count = articlePageService.countArticlePagesByCategoryId(categoryId);

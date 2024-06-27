@@ -22,8 +22,6 @@ public class UserSubmittedArticlePage extends ArticlePage{
     private ArticlePage parentArticlePage;
 
     private String submittedBy;
-    private boolean approved = false;
-    private boolean isNewPage;
 
     // Constructors, getters, setters
 //    public UUID getUserSubmittedArticlePageId() {
@@ -57,20 +55,5 @@ public class UserSubmittedArticlePage extends ArticlePage{
     public void setSubmittedBy(String submittedBy) {
         this.submittedBy = submittedBy;
     }
-
-    public boolean isApproved() {
-        return approved;
-    }
-
-    public void setApproved(boolean approved) {
-        this.approved = approved;
-    }
-
-    public boolean isNewPage() {
-        return isNewPage;
-    }
-
-    public void setNewPage(boolean newPage) {
-        isNewPage = newPage;
-    }
+    
 }

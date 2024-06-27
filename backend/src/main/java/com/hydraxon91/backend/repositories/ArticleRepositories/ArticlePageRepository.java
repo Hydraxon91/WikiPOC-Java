@@ -16,6 +16,7 @@ public interface ArticlePageRepository extends JpaRepository<ArticlePage, UUID> 
     boolean existsBySlug(String slug);
     Optional<ArticlePage> findBySlug(String slug);
     List<ArticlePage> findByCategoryId(UUID categoryId);
+    List<ArticlePage> findByCategorySlugAndApprovedIsTrueAndArchivedIsFalse(String slug);
     long countByCategoryId(UUID categoryId);
     List<ArticlePage> findByApprovedIsTrue();
     List<ArticlePage> findByArchivedIsFalseAndApprovedIsTrue();

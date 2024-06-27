@@ -8,19 +8,22 @@ import com.hydraxon91.backend.models.Forms.ImageFormModel;
 import com.hydraxon91.backend.models.Forms.WPWithImagesOutputModel;
 import com.hydraxon91.backend.repositories.ArticleRepositories.ArticlePageRepository;
 import com.hydraxon91.backend.repositories.ArticleRepositories.ParagraphRepository;
+import com.hydraxon91.backend.services.User.CommentService;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,6 +32,11 @@ public class ArticlePageService {
 
     private final ArticlePageRepository articlePageRepository;
     private final ParagraphRepository paragraphRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(ArticlePageService.class);
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Value("${pictures.path-container}")
     private String picturesPathContainer;
@@ -95,6 +103,10 @@ public class ArticlePageService {
 
     public List<ArticlePageProjection> getArticleTitlesAndSlugs() {
         return articlePageRepository.findArticleTitlesAndSlugs();
+    }
+
+    public List<ArticlePage> findApprovedAndNotArchivedPagesByCategoryId(String categorySlug) {
+        return articlePageRepository.findByCategorySlugAndApprovedIsTrueAndArchivedIsFalse(categorySlug);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -239,6 +251,10 @@ public class ArticlePageService {
         ArticlePage userSubmittedArticle = articlePageRepository.findById(userSubmittedUpdateId)
                 .orElseThrow(() -> new EntityNotFoundException("User-submitted article not found with id: " + userSubmittedUpdateId));
 
+
+        // Debug: Ensure userSubmittedArticle is correctly retrieved
+        logger.info("Before setting approved: " + userSubmittedArticle.isApproved());
+        
         // Set approved status and preserve original title
         userSubmittedArticle.setApproved(true);
         userSubmittedArticle.setTitle(originalArticle.getTitle());
@@ -261,8 +277,13 @@ public class ArticlePageService {
         // Save the updated user-submitted article
         articlePageRepository.save(userSubmittedArticle);
 
+        // Flush changes to ensure they are persisted
+        entityManager.flush();
+        entityManager.clear();
+
         return true;
     }
+
 
     // Implement methods for handling paragraphs related to ArticlePage
     public List<Paragraph> getParagraphsByArticlePageId(UUID articlePageId) {
