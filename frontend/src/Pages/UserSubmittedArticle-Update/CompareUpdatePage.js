@@ -23,16 +23,14 @@ const CompareUpdatePage = () => {
     }, [location.pathname]);
 
     useEffect(()=>{
-        // console.log(updatePage);
-        if (updatePage && updatePage.userSubmittedWikiPage.wikiPageId) {
-            fetchOriginalPage(updatePage.userSubmittedWikiPage.wikiPageId);
+        if (updatePage && updatePage.articlePage && updatePage.articlePage.parentArticlePageId) {
+            fetchOriginalPage(updatePage.articlePage.parentArticlePageId);
         }
     },[updatePage])
 
     const fetchUpdatePage = async (id) => {
         try {
             const data = await getUpdatePageById(id, cookies['jwt_token'])
-            console.log(data);
             setUpdatePage(data)
         } catch (error) {
           console.error('Error fetching page:', error);
@@ -40,9 +38,10 @@ const CompareUpdatePage = () => {
       };
 
       const fetchOriginalPage = async (title) => {
+        console.log(title);
         try {
             const data = await getWikiPageById(title)
-            // console.log(data);
+            console.log(data);
             setOriginalPage(data)
         } catch (error) {
           console.error('Error fetching page:', error);
@@ -52,7 +51,7 @@ const CompareUpdatePage = () => {
       const handleAccept = () => {
         // console.log(updatePage);
         // console.log(originalPage);
-        acceptUserSubmittedUpdate(updatePage.userSubmittedWikiPage.id, cookies["jwt_token"])
+        acceptUserSubmittedUpdate(updatePage.articlePage.id, originalPage.articlePage.id, cookies["jwt_token"])
           .then(() => {
             // setWikiPageTitles(wikiPageTitles.filter((page) => page !== currentWikiPage.Title));
             alert("Succesfully updated page");
@@ -65,7 +64,7 @@ const CompareUpdatePage = () => {
 
       const handleDecline = () => {
         // console.log(updatePage.userSubmittedWikiPage.id);
-        declineUserSubmittedWikiPage(updatePage.userSubmittedWikiPage.id, cookies["jwt_token"])
+        declineUserSubmittedWikiPage(updatePage.articlePage.id, cookies["jwt_token"])
           .then(() => {
             // setWikiPageTitles(wikiPageTitles.filter((page) => page !== currentWikiPage.Title));
             alert("Declined Change");

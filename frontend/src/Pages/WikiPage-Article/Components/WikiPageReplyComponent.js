@@ -14,12 +14,17 @@ const WikiPageReplyComponent = ({ user, page, cookies, handleCommentSubmit, post
         const newComment = {
             content: commentText,
             userProfileId: user.id,
+            userProfile: user,
             wikiPageId: page.id,
             postDate: new Date().toISOString(),
-            replyToCommentId: replyTo.id,
+            replyToCommentId: replyTo.uuid,
+            replyToComment: replyTo,
             isEdited: false,
         };
-
+        console.log(user);
+        console.log(user.id);
+        console.log(replyTo);
+        console.log(newComment);
         try {
             await postComment(newComment, cookies, user);
             setCommentText('');

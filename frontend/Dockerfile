@@ -1,5 +1,5 @@
 ﻿# Use the official Node.js image as the base image
-FROM node:16
+FROM node:18.13 AS build
 
 # Set the working directory
 WORKDIR /app
@@ -18,6 +18,9 @@ RUN npm run build
 
 # Use the official Nginx image to serve the app
 FROM nginx:alpine
+
+# Remove default NGINX website
+RUN rm -rf /usr/share/nginx/html/*
 
 # Copy the build output to the Nginx HTML directory
 COPY --from=0 /app/build /usr/share/nginx/html

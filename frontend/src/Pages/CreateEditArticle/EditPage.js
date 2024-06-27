@@ -25,20 +25,20 @@ const EditPage = ({ page, handleEdit, handleCreate }) => {
   useEffect(() => {
     console.log(page);
     if (page) {
-      setTemporaryPage(page.wikiPage || page.userSubmittedWikiPage);
-      setTitle(page.wikiPage.title || page.userSubmittedWikiPage.title);
-      setRoleNote(page.wikiPage.roleNote || page.userSubmittedWikiPage.roleNote);
-      setSiteSub(page.wikiPage.siteSub || page.userSubmittedWikiPage.siteSub);
-      page.wikiPage && page.wikiPage.content && setContent(page.wikiPage.content);
+      setTemporaryPage(page.articlePage || page.userSubmittedWikiPage);
+      setTitle(page.articlePage.title || page.userSubmittedWikiPage.title);
+      setRoleNote(page.articlePage.roleNote || page.userSubmittedWikiPage.roleNote);
+      setSiteSub(page.articlePage.siteSub || page.userSubmittedWikiPage.siteSub);
+      page.articlePage && page.articlePage.content && setContent(page.articlePage.content);
       page.userSubmittedWikiPage && page.userSubmittedWikiPage.content &&  setContent(page.userSubmittedWikiPage.content);
-      setCategory(page.wikiPage.categoryId || page.userSubmittedWikiPage.categoryId);
-      page.wikiPage.paragraphs && setParagraphs([...page.wikiPage.paragraphs]);
+      setCategory(page.articlePage.categoryId || page.userSubmittedWikiPage.categoryId);
+      page.articlePage.paragraphs && setParagraphs([...page.articlePage.paragraphs]);
       const renamedImages = page.images ? page.images.map(image => ({ ...image, name: image.fileName })) : [];
       console.log("asdasd");
       setImages(renamedImages);
       setUsedImages(renamedImages);
-      page.wikiPage && setLegacyPage(page.wikiPage.legacyWikiPage);
-      page.userSubmittedWikiPage && setLegacyPage(page.wikiPage.legacyWikiPage);
+      page.articlePage && setLegacyPage(page.articlePage.legacyWikiPage);
+      page.userSubmittedWikiPage && setLegacyPage(page.articlePage.legacyWikiPage);
       setNewPage(false);
     }
     else{
@@ -64,14 +64,16 @@ const EditPage = ({ page, handleEdit, handleCreate }) => {
     // console.log(hrefValues);
     handleFieldChange('content', value);
     const usedImagesArray = images && images.filter(image => hrefValues.some(href => href.includes(image.name)));
-    // console.log(usedImagesArray);
+    console.log(usedImagesArray);
+    console.log(hrefValues);
+    console.log(value);
     setUsedImages(usedImagesArray); 
     updateTemporaryPage(title, siteSub, roleNote, value);
 };
 
 
   const extractHrefValues = (inputString) => {
-    const regex = /href="([^"]*\.(?:jpg|png|gif))"/g;
+    const regex = /href="([^"]*\.(?:jpg|png|gif|jpeg))"/g;
     const hrefValues = [];
     let match;
     

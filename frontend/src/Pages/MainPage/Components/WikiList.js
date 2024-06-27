@@ -123,8 +123,8 @@ return (
       <h3 style={{marginBottom:"5px", fontSize:'110%'}}>Categories</h3>
       {categories && categories.map((category, index) => (
         <div key={index}>
-          <Link to={`/categories/${encodeURIComponent(category)}`}>
-            <p style={{marginBottom:'4px', fontSize:'80%'}}>{category}</p>
+          <Link to={`/categories/${encodeURIComponent(category.slug)}`}>
+            <p style={{marginBottom:'4px', fontSize:'80%'}}>{category.categoryName}</p>
           </Link>
         </div>
       ))}

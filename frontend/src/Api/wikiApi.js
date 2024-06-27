@@ -1,7 +1,7 @@
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 export const getWikiPages = async () => {
-  const response = await fetch(`${BASE_URL}/api/WikiPages`);
+  const response = await fetch(`${BASE_URL}/api/article-pages`);
   if (!response.ok) {
     throw new Error(`Failed to get WikiPages. Status: ${response.status}`);
   }
@@ -9,20 +9,19 @@ export const getWikiPages = async () => {
   return data;
 };
 
-export const getWikiPageTitles = async () => {
-    const response = await fetch(`${BASE_URL}/api/WikiPages/GetTitles`, {
+export const getWikiPageTitlesAndSlugs = async () => {
+    const response = await fetch(`${BASE_URL}/api/article-pages/titles-and-slugs`, {
       method: 'GET',
     });
     if (!response.ok) {
       throw new Error(`Failed to get WikiPage Titles. Status: ${response.status}`);
     }
     const data = await response.json();
-    // console.log(data);
     return data;
   };
 
 export const getWikiPageById = async (id) => {
-    const response = await fetch(`${BASE_URL}/api/WikiPages/GetById/${id}`);
+    const response = await fetch(`${BASE_URL}/api/article-pages/getbyid/${id}`);
     if (!response.ok) {
       throw new Error(`Failed to get WikiPage. Status: ${response.status}`);
     }
@@ -39,79 +38,89 @@ export const getWikiPageById = async (id) => {
     return data;
   };
 
-export const createWikiPage = async (newPage, token, decodedToken, images) => {
-  console.log(newPage);
-  var role = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-  var userName = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
-  var url = role==="ADMIN"? `${BASE_URL}/api/WikiPages/admin` : `${BASE_URL}/api/WikiPages/user`;
+  export const getWikiPageBySlug = async (slug) => {
+    const response = await fetch(`${BASE_URL}/api/article-pages/getbyslug/${slug}`);
+    if (!response.ok) {
+      throw new Error(`Failed to get WikiPage. Status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log(data);
+    return data;
+  };
 
-  const formData = new FormData();
-  if (role !== "ADMIN") {
-    formData.append('wikiPageWithImagesInputModel.IsNewPage', true)
-    formData.append('wikiPageWithImagesInputModel.Approved', false)
-    formData.append('wikiPageWithImagesInputModel.SubmittedBy', userName);
-  }
+  export const createWikiPage = async (newPage, token, decodedToken, images) => {
+    const role = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+    const userName = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
+    const isAdmin = role === "ADMIN";
+    const url = isAdmin ? `${BASE_URL}/api/article-pages/addAdmin` : `${BASE_URL}/api/article-pages/addUser`;
 
-  formData.append(`wikiPageWithImagesInputModel.Title`, newPage.title);
-  formData.append(`wikiPageWithImagesInputModel.CategoryId`, newPage.category);
-  formData.append(`wikiPageWithImagesInputModel.SiteSub`, newPage.siteSub);
-  formData.append(`wikiPageWithImagesInputModel.RoleNote`, newPage.roleNote);
-  formData.append(`wikiPageWithImagesInputModel.Content`, newPage.content);
-  formData.append(`model.Paragraphs`, newPage.paragraphs);
-  // formData.append(`model.Images`, images);
+    const formData = new FormData();
+    // Append fields from newPage
+    formData.append('title', newPage.title);
+    formData.append('categoryId', newPage.category);
+    formData.append('siteSub', newPage.siteSub);
+    formData.append('roleNote', newPage.roleNote);
+    formData.append('content', newPage.content);
 
-  // Append images to the FormData object
-  images.forEach((image, index) => {
-    console.log(typeof image);
-    console.log(image);
-    formData.append(`wikiPageWithImagesInputModel.Images[${index}].FileName`, image.name);
-    formData.append(`wikiPageWithImagesInputModel.Images[${index}].DataURL`, image.dataURL);
-  });
-  // for (let index = 0; index < images.length; index++) {
-  //   formData.append(`wikiPageWithImagesInputModel.Images`, images[index])    
-  // }
+    // Additional fields for user submissions
+    if (!isAdmin) {
+        formData.append('isNewPage', true);
+        formData.append('approved', false);
+        formData.append('submittedBy', userName);
 
-  console.log(newPage);
-  for (const value of formData) {
-    console.log(value);
-  }
+    }
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
-    body: formData,
-  });
+    // Append images to FormData object
+    console.log(images.length);
+    if (images && images.length > 0) {
+        images.forEach((image, index) => {
+          console.log(image);
+          formData.append(`images[${index}].fileName`, image.name); // Adjust based on actual structure of ImageFormModel
+          formData.append(`images[${index}].dataURL`, image.dataURL); // Adjust based on actual structure of ImageFormModel
+        });
+    }
 
-  if (!response.ok) {
-    throw new Error(`Failed to create WikiPage. Status: ${response.status}`);
-  }
-  const data = await response.json();
-  return data;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to create WikiPage. Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error creating WikiPage:', error.message);
+        throw error;
+    }
 };
 
-
 export const updateWikiPage = async (updatedPage, token, decodedToken, images) => {
-  console.log(updatedPage);
     var role = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
     var userName = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
-    var url = role==="ADMIN"? `${BASE_URL}/api/WikiPages/admin/${updatedPage.id}` : `${BASE_URL}/api/WikiPages/userUpdate/${updatedPage.id}`;
+    var url = role==="ADMIN"? `${BASE_URL}/api/article-pages/update/${updatedPage.id}` : `${BASE_URL}/api/WikiPages/userUpdate/${updatedPage.id}`;
     const formData = new FormData();
     if (role !== "ADMIN") {
-      formData.append('wikiPageWithImagesInputModel.WikiPageId', updatedPage.id)
-      formData.append('wikiPageWithImagesInputModel.SubmittedBy', userName);
+      formData.append('parentArticlePageId', updatedPage.id)
+      formData.append('submittedBy', userName);
+      formData.append('approved', false)
+      formData.append('isNewPage', false);
     }
-    formData.append(`wikiPageWithImagesInputModel.Title`, updatedPage.title);
-    formData.append(`wikiPageWithImagesInputModel.CategoryId`, updatedPage.category);
-    formData.append(`wikiPageWithImagesInputModel.SiteSub`, updatedPage.siteSub);
-    formData.append(`wikiPageWithImagesInputModel.RoleNote`, updatedPage.roleNote);
-    formData.append(`wikiPageWithImagesInputModel.Content`, updatedPage.content);
-    formData.append(`model.Paragraphs`, updatedPage.paragraphs);
+    formData.append('title', updatedPage.title);
+    formData.append('categoryId', updatedPage.categoryId);
+    formData.append('siteSub', updatedPage.siteSub);
+    formData.append('roleNote', updatedPage.roleNote);
+    formData.append('content', updatedPage.content);
     // Append images to the FormData object
     images && images.forEach((image, index) => {
-      formData.append(`wikiPageWithImagesInputModel.Images[${index}].FileName`, image.name);
-      formData.append(`wikiPageWithImagesInputModel.Images[${index}].DataURL`, image.dataURL);
+      formData.append(`images[${index}].fileName`, image.name); // Adjust based on actual structure of ImageFormModel
+      formData.append(`images[${index}].dataURL`, image.dataURL); // Adjust based on actual structure of ImageFormModel
     });
     // console.log(`calling ${url} ${token}`);
     const response = await fetch(url, {
@@ -215,7 +224,7 @@ export const getLogo = async(pictureString) => {
 };
 
 export const getNewPageTitles = async (token) => {
-  const response = await fetch(`${BASE_URL}/api/WikiPages/GetSubmittedPageTitles`, {
+  const response = await fetch(`${BASE_URL}/api/article-pages/unapproved-new-page-titles`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -231,7 +240,7 @@ export const getNewPageTitles = async (token) => {
 
 
 export const getNewPageById = async (id, token) => {
-  const response = await fetch(`${BASE_URL}/api/WikiPages/GetSubmittedPageById/${id}`, {
+  const response = await fetch(`${BASE_URL}/api/article-pages/getbyid/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -248,7 +257,7 @@ export const getNewPageById = async (id, token) => {
 
 export const getUpdatePageTitles = async (token) => {
   // console.log(token);
-  const response = await fetch(`${BASE_URL}/api/WikiPages/GetSubmittedUpdates`, {
+  const response = await fetch(`${BASE_URL}/api/article-pages/unapproved-update-titles`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -259,12 +268,13 @@ export const getUpdatePageTitles = async (token) => {
     throw new Error(`Failed to get WikiPage Titles. Status: ${response.status}`);
   }
   const data = await response.json();
+  
   return data;
 };
 
 
 export const getUpdatePageById = async (id, token) => {
-  const response = await fetch(`${BASE_URL}/api/WikiPages/GetSubmittedUpdateById/${id}`, {
+  const response = await fetch(`${BASE_URL}/api/article-pages/getbyid/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -279,12 +289,12 @@ export const getUpdatePageById = async (id, token) => {
   return data;
 };
 
-export const acceptUserSubmittedUpdate = async (id, token) => {
+export const acceptUserSubmittedUpdate = async (id, originalId, token) => {
   try {
 
     console.log('Request Data:', id);
     
-    const response = await fetch(`${BASE_URL}/api/WikiPages/AdminAccept/${id}`, {
+    const response = await fetch(`${BASE_URL}/api/article-pages/accept-update/${originalId}/${id}`, {
       method: "PATCH",
       headers: {
         'Content-Type': 'application/json',
@@ -297,7 +307,7 @@ export const acceptUserSubmittedUpdate = async (id, token) => {
       throw new Error(`Failed to Update WikiPage. Status: ${response.status}. Details: ${JSON.stringify(errorData)}`);
     }
 
-    const data = await response.json();
+    const data = await response.text();
     return data;
   } catch (error) {
     console.error('Error in acceptUserSubmittedUpdate:', error);
@@ -306,27 +316,28 @@ export const acceptUserSubmittedUpdate = async (id, token) => {
   }
 };
 
-export const acceptUserSubmittedPage = async (updatedPage, token) => {
-  console.log("Acceptusersubmittedpage");
-  console.log(updatedPage.userSubmittedWikiPage.id);
-  const response = await fetch(`${BASE_URL}/api/WikiPages/AdminAccept`, {
-    method: "POST",
+export const acceptUserSubmittedPage = async (id, token) => {
+  // console.log("Acceptusersubmittedpage");
+  console.log(id);
+  const response = await fetch(`${BASE_URL}/api/article-pages/accept-page/${id}`, {
+    method: "PATCH",
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
     },
-    body: JSON.stringify(updatedPage.userSubmittedWikiPage.id),
+    
   });
   if (!response.ok) {
     throw new Error(`Failed to Accept WikiPage. Status: ${response.status}`);
   }
-  const data = await response.json();
+  const data = await response.text();
+  console.log(data);
   return data;
 };
 
 export const declineUserSubmittedWikiPage = async (id, token) =>{
   // console.log(id);
-  const response = await fetch(`${BASE_URL}/api/WikiPages/AdminDecline/${id}`, {
+  const response = await fetch(`${BASE_URL}/api/article-pages/decline-page/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -339,34 +350,58 @@ export const declineUserSubmittedWikiPage = async (id, token) =>{
       throw new Error(`Failed to delete WikiPage. Status: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = await response.text();
     return data;
 };
 
 export const fetchCategories = async () => {
-  const response = await fetch(`${BASE_URL}/api/Category`, {
+  const response = await fetch(`${BASE_URL}/api/categories`, {
     method: 'GET',
   });
   if (!response.ok) {
     throw new Error(`Failed to get Categories. Status: ${response.status}`);
   }
   const data = await response.json();
-  // console.log(data);
-  // const categoryNames = data.map(category => ({ id: category.id, categoryName: category.categoryName }));
-  // console.log(categoryNames);
-  // categoryNames.push("Uncategorized");
   return data;
 };
 
+export const fetchPagesForAllCategories = async (categories) => {
+  console.log(categories);
+  const pagesByCategory = {};
+  // Fetch pages for each category
+  await Promise.all(categories.map(async (category) => {
+    const response = await fetch(`${BASE_URL}/api/categories/${category.slug}/approvedNotArchivedArticlePages`);
+    const pages = await response.json();
+    pagesByCategory[category.categoryName] = pages;
+  }));
+  return pagesByCategory;
+}
+
+export const fetchPagesByCategory = async (category) => {
+  const pagesByCategory = {};
+  // Fetch pages for each category
+  const response = await fetch(`${BASE_URL}/api/categories/${category}/approvedNotArchivedArticlePages`);
+  const pages = await response.json(); 
+  return pages;
+}
+
+export const fetchPagesCountByCategory = async (categoryId) => {
+  const response = await fetch(`${BASE_URL}/api/categories/${categoryId}/articlePages/count`);
+  if (!response.ok) {
+      throw new Error('Failed to fetch page count');
+  }
+  const count = await response.json();
+  return count;
+};
 
 export const addCategory = async (categoryName, token) => {
-  const response = await fetch(`${BASE_URL}/api/Category`, {
+  const response = await fetch(`${BASE_URL}/api/categories`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
     },
-    body: JSON.stringify(categoryName)
+    body: categoryName
   });
 
   if (!response.ok) {
@@ -379,7 +414,7 @@ export const addCategory = async (categoryName, token) => {
 };
 
 export const deleteCategory = async (categoryId, token) => {
-  const response = await fetch(`${BASE_URL}/api/Category/${categoryId}`, {
+  const response = await fetch(`${BASE_URL}/api/categories/${categoryId}`, {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${token}`,

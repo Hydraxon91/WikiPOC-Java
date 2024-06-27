@@ -16,9 +16,9 @@ const WikiPage = ({page: wikipage, setDecodedTitle, cookies, disableNavbar = fal
 
 
     useEffect(()=>{
-        if (wikipage && (wikipage.wikiPage || wikipage.userSubmittedWikiPage))  {
+        if (wikipage && (wikipage.articlePage || wikipage.userSubmittedArticlePage))  {
             setActiveTab('wiki');
-            setPage(wikipage.wikiPage ?? wikipage.userSubmittedWikiPage);
+            setPage(wikipage.articlePage ?? wikipage.userSubmittedArticlePage);
             setImages(wikipage.images)
         }
     },[wikipage])
@@ -51,8 +51,7 @@ const WikiPage = ({page: wikipage, setDecodedTitle, cookies, disableNavbar = fal
             )}
             
             <div className="wiki-page-container">
-                {page && !page.legacyWikiPage ? 
-                (
+                { activeTab === 'wiki' ? (
                     <WikiPageComponent
                         page={page}
                         setDecodedTitle={setDecodedTitle}
@@ -60,20 +59,15 @@ const WikiPage = ({page: wikipage, setDecodedTitle, cookies, disableNavbar = fal
                         className={activeTab === 'wiki' ? 'wikipage-visible' : 'wikipage-hidden'}
                         images={images}
                     />
-                ) : (
-                    <LegacyWikiPageComponent
+                )
+                :
+                (
+                    <WikiPageCommentsComponent  
                         page={page}
-                        setDecodedTitle={setDecodedTitle}
+                        cookies={cookies}
                         activeTab={activeTab}
-                        className={activeTab === 'wiki' ? 'wikipage-visible' : 'wikipage-hidden'}
                     />
                 )}
-                
-                <WikiPageCommentsComponent
-                    page={page}
-                    cookies={cookies}
-                    activeTab={activeTab}
-                />
             </div>
         </div>
     )

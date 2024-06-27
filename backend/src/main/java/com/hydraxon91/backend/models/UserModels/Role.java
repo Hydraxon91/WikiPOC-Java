@@ -1,5 +1,6 @@
 package com.hydraxon91.backend.models.UserModels;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import jakarta.persistence.*;
 import java.util.HashSet;
@@ -10,7 +11,7 @@ import java.util.UUID;
 public class Role implements GrantedAuthority {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private UUID id;
 
     private String name;

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { format } from 'date-fns';
+import { format  } from 'date-fns';
 import WikiPageReplyComponent from './WikiPageReplyComponent';
 import DisplayProfileImageElement from '../../ProfilePage/Components/DisplayProfileImageElement';
+
 
 const UserCommentComponent = ({ comment, user, cookies, handleCommentSubmit, postComment, page, index, showRepliesIndex, toggleRepliesIndex }) => {
     const [editingCommentIndex, setEditingCommentIndex] = useState(null);
     const [editedComment, setEditedComment] = useState("");
     const [showReplyBox, setShowReplyBox] = useState(false);
-
+    
     const handleEditClick = (initialContent) => {
         setEditingCommentIndex(comment.id);
         setEditedComment(initialContent);
@@ -24,11 +25,10 @@ const UserCommentComponent = ({ comment, user, cookies, handleCommentSubmit, pos
         setEditedComment("");
     };
 
-    function formatDate(dateString) {
-        const utcDate = new Date(dateString + 'Z');
-        const formattedDate = format(utcDate, 'EEEE, dd MMM yyyy, HH:mm');
-        return formattedDate.replace(/\//g, '-');
-    }
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return format(date, 'yyyy-MM-dd HH:mm'); // Format the date as desired
+    };
 
     return (
         <div className='wikipage-comment'>
@@ -43,6 +43,7 @@ const UserCommentComponent = ({ comment, user, cookies, handleCommentSubmit, pos
                     </a>
                     {" | "}
                     <span>{formatDate(comment.postDate)}</span>
+                    <a href="#"> edit</a>
                 </div>
                 <div className='wikipage-comment-text'>
                     {editingCommentIndex === index ? (

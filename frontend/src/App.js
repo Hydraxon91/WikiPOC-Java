@@ -7,7 +7,7 @@ import EditStylePage from "./Pages/EditStylePage/EditStylePage.js";
 import MainPage from "./Pages/MainPage/MainPage.js";
 import HomeComponent from "./Pages/MainPage/Components/HomeComponent.js";
 import { StyleProvider  } from "./Components/contexts/StyleContext.js";
-import { createWikiPage, deleteWikiPage, updateWikiPage, getWikiPageByTitle, fetchCategories } from "./Api/wikiApi.js";
+import { createWikiPage, deleteWikiPage, updateWikiPage, getWikiPageBySlug, fetchCategories } from "./Api/wikiApi.js";
 import LoginPageComponent from "./Pages/LoginLogoutPages/LoginPageComponent.js";
 import { CookiesProvider, useCookies } from "react-cookie";
 import { jwtDecode } from 'jwt-decode';
@@ -53,7 +53,7 @@ function App() {
       .then(categories => {
         const categoryNames = categories.map(category => category.categoryName);
         categoryNames.push("Uncategorized");
-        setCategories(categoryNames);
+        setCategories(categories);
       })
       .catch(error => {
         console.error('Error fetching categories:', error);
@@ -62,7 +62,8 @@ function App() {
 
   const fetchPage = async () => {
     try {
-      const data = await getWikiPageByTitle(decodedTitle);
+      console.log(decodedTitle);
+      const data = await getWikiPageBySlug(decodedTitle);
       setCurrentWikiPage(data);
       // console.log(data);
     } catch (error) {

@@ -13,15 +13,16 @@ const WikiPageSubmitCommentComponent = ({ user, page, cookies, handleCommentSubm
         const newComment = {
             content: commentText,
             userProfileId: user.id,
-            // userProfile: user,
+            userProfile: user,
             wikiPageId: page.id,
             postDate: new Date().toISOString(),
             replyToCommentId: null,
             isEdited: false,
         };
 
+        // console.log(user);
         try {
-            console.log(newComment);
+            // console.log(newComment);
             await postComment(newComment, cookies, user);
             setCommentText('');
             newComment.userProfile = user;

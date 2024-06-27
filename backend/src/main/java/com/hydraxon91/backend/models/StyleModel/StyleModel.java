@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 @Table(name = "style_model")
 public class StyleModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private int id;
     private String logo;
     private String wikiName;

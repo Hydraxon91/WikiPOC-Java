@@ -5,7 +5,7 @@ import Breadcrumbs from '../ForumPages/Components/Breadcrumbs';
 import HeaderComponent from './Components/HeaderComponent';
 import { useStyleContext } from '../../Components/contexts/StyleContext';
 import { useUserContext } from '../../Components/contexts/UserContextProvider';
-import { getWikiPageTitles } from '../../Api/wikiApi';
+import { getWikiPageTitlesAndSlugs } from '../../Api/wikiApi';
 
 const MainPage = ({ decodedToken, handleLogout, cookies, setWikiPageTitles, categories }) => {
   const location = useLocation();
@@ -34,7 +34,7 @@ const MainPage = ({ decodedToken, handleLogout, cookies, setWikiPageTitles, cate
 
   const fetchWikiPageTitles = async () => {
     try {
-      const pages = await getWikiPageTitles();
+      const pages = await getWikiPageTitlesAndSlugs();
       // console.log(pages);
       setWikiPageTitles(pages);
     } catch (error) {
