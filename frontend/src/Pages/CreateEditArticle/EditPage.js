@@ -64,14 +64,16 @@ const EditPage = ({ page, handleEdit, handleCreate }) => {
     // console.log(hrefValues);
     handleFieldChange('content', value);
     const usedImagesArray = images && images.filter(image => hrefValues.some(href => href.includes(image.name)));
-    // console.log(usedImagesArray);
+    console.log(usedImagesArray);
+    console.log(hrefValues);
+    console.log(value);
     setUsedImages(usedImagesArray); 
     updateTemporaryPage(title, siteSub, roleNote, value);
 };
 
 
   const extractHrefValues = (inputString) => {
-    const regex = /href="([^"]*\.(?:jpg|png|gif))"/g;
+    const regex = /href="([^"]*\.(?:jpg|png|gif|jpeg))"/g;
     const hrefValues = [];
     let match;
     

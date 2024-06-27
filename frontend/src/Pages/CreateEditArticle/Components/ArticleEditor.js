@@ -26,6 +26,8 @@ const ArticleEditor = ({ title, siteSub, roleNote, content, handleFieldChange, h
     getCategories();
   }, []);
 
+  useEffect(()=>{console.log(images);},[images])
+
   useEffect(() => {
     const editor = quillRef.current?.getEditor();
     if (editor) {
