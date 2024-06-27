@@ -126,6 +126,8 @@ public class DataLoader implements CommandLineRunner {
             articlePage.setSlug("test-title");
             articlePage.setPostDate(LocalDateTime.now());
             articlePage.setLastUpdateDate(LocalDateTime.now());
+            articlePage.setApproved(true);
+            articlePage.setNewPage(false);
             
             articlePageRepository.save(articlePage);
         }
@@ -147,6 +149,7 @@ public class DataLoader implements CommandLineRunner {
             articlePage.setLastUpdateDate(LocalDateTime.now());
             articlePage.setSubmittedBy("Jani");
             articlePage.setNewPage(true);
+            articlePage.setApproved(false);
 
             articlePageRepository.save(articlePage);
         }
