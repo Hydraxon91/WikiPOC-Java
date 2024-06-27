@@ -22,7 +22,7 @@ public class ArticlePageWithImagesInputModel {
     private boolean legacyArticlePage = false;
 
     // If it's a user-submitted article page
-    private UUID articlePageId;
+    private UUID parentArticlePageId;
     @JsonIgnore
     private ArticlePage parentArticlePage;
     private String submittedBy;
@@ -98,12 +98,12 @@ public class ArticlePageWithImagesInputModel {
         this.legacyArticlePage = legacyArticlePage;
     }
 
-    public UUID getArticlePageId() {
-        return articlePageId;
+    public UUID getParentArticlePageId() {
+        return parentArticlePageId;
     }
 
     public void setArticlePageId(UUID articlePageId) {
-        this.articlePageId = articlePageId;
+        this.parentArticlePageId = articlePageId;
     }
 
     public ArticlePage getPArentArticlePage() {
