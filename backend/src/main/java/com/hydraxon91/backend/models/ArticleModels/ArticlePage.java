@@ -38,9 +38,7 @@ public class ArticlePage {
     private boolean legacyArticlePage = false;
     private boolean approved;
     private boolean isNewPage;
-    
-    @OneToMany(mappedBy = "articlePage", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Paragraph> paragraphs = new ArrayList<>();
+    private boolean archived = false; 
 
     @OneToMany(mappedBy = "articlePage", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArticleComment> comments = new ArrayList<>();
@@ -133,14 +131,7 @@ public class ArticlePage {
     public void setLegacyArticlePage(boolean legacyArticlePage) {
         this.legacyArticlePage = legacyArticlePage;
     }
-
-    public List<Paragraph> getParagraphs() {
-        return paragraphs;
-    }
-
-    public void setParagraphs(List<Paragraph> paragraphs) {
-        this.paragraphs = paragraphs;
-    }
+    
 
     public List<ArticleComment> getComments() {
         return comments;
@@ -164,5 +155,13 @@ public class ArticlePage {
 
     public void setNewPage(boolean newPage) {
         isNewPage = newPage;
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
+    
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
 }

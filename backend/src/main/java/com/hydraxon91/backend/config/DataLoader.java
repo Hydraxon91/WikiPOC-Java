@@ -71,6 +71,8 @@ public class DataLoader implements CommandLineRunner {
 
         createBaseArticle();
         createBaseUserSubmittedArticle();
+        
+        createBaseUserSubmittedArticleUpdate();
     }
 
     private void createDefaultRoles() {
@@ -151,6 +153,32 @@ public class DataLoader implements CommandLineRunner {
             articlePage.setNewPage(true);
             articlePage.setApproved(false);
 
+            articlePageRepository.save(articlePage);
+        }
+    }
+
+    private void createBaseUserSubmittedArticleUpdate() {
+        Optional<Category> existingCategory = categoryRepository.findBySlug("science");
+        Optional<ArticlePage> existingArticlePage = articlePageRepository.findBySlug("test-title");
+        if (existingCategory.isPresent() && existingArticlePage.isPresent()){
+            Category category = existingCategory.get();
+            ArticlePage parentArticlePage = existingArticlePage.get();
+            
+            UserSubmittedArticlePage articlePage = new UserSubmittedArticlePage();
+            articlePage.setTitle("Test title Update");
+            articlePage.setSiteSub("Update Sitesub");
+            articlePage.setRoleNote("Update note");
+            articlePage.setContent("Update content");
+            articlePage.setCategory(category);
+            articlePage.setCategoryId(category.getId());
+            articlePage.setSlug("test-title-update");
+            articlePage.setPostDate(LocalDateTime.now());
+            articlePage.setLastUpdateDate(LocalDateTime.now());
+            articlePage.setSubmittedBy("Jani");
+            articlePage.setNewPage(false);
+            articlePage.setApproved(false);
+//            articlePage.setParentArticlePage(parentArticlePage);
+            articlePage.setParentArticleId(parentArticlePage.getId());
             articlePageRepository.save(articlePage);
         }
     }

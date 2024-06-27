@@ -8,6 +8,7 @@ import com.hydraxon91.backend.models.Forms.ImageFormModel;
 import com.hydraxon91.backend.models.Forms.WPWithImagesOutputModel;
 import com.hydraxon91.backend.repositories.ArticleRepositories.ArticlePageRepository;
 import com.hydraxon91.backend.repositories.ArticleRepositories.ParagraphRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class ArticlePageService {
     }
 
     public List<ArticlePage> getAllArticlePages() {
-        return articlePageRepository.findByApprovedIsTrue();
+        return articlePageRepository.findByArchivedIsFalseAndApprovedIsTrue();
     }
 
     public List<ArticlePage> getUnapprovedUserSubmittedNewPages() {
@@ -206,6 +207,61 @@ public class ArticlePageService {
         } else {
             return false;
         }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public boolean archiveArticlePage(UUID id) {
+        Optional<ArticlePage> existingArticlePageOpt = articlePageRepository.findById(id);
+        if (existingArticlePageOpt.isPresent()) {
+            ArticlePage existingArticlePage = existingArticlePageOpt.get();
+            existingArticlePage.setArchived(true); // Set archived to true instead of deleting
+            articlePageRepository.save(existingArticlePage);
+
+            // Optionally, handle deletion of associated files or other cleanup here
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public boolean acceptUserSubmittedUpdate(UUID originalArticleId, UUID userSubmittedUpdateId) {
+        // Retrieve the original article
+        ArticlePage originalArticle = articlePageRepository.findById(originalArticleId)
+                .orElseThrow(() -> new EntityNotFoundException("Original article not found with id: " + originalArticleId));
+
+        // Archive the original article instead of deleting it
+        originalArticle.setArchived(true);
+        articlePageRepository.save(originalArticle);
+
+        // Retrieve the user-submitted article
+        ArticlePage userSubmittedArticle = articlePageRepository.findById(userSubmittedUpdateId)
+                .orElseThrow(() -> new EntityNotFoundException("User-submitted article not found with id: " + userSubmittedUpdateId));
+
+        // Set approved status and preserve original title
+        userSubmittedArticle.setApproved(true);
+        userSubmittedArticle.setTitle(originalArticle.getTitle());
+
+        // Check if the original slug exists
+        String originalSlug = originalArticle.getSlug();
+        String newSlug = originalSlug;
+
+        if (articlePageRepository.existsBySlug(originalSlug)) {
+            // Generate a new unique slug if the original slug exists
+            int suffix = 1;
+            while (articlePageRepository.existsBySlug(newSlug)) {
+                newSlug = originalSlug + "-" + suffix++;
+            }
+        }
+
+        // Set the new unique slug
+        userSubmittedArticle.setSlug(newSlug);
+
+        // Save the updated user-submitted article
+        articlePageRepository.save(userSubmittedArticle);
+
+        return true;
     }
 
     // Implement methods for handling paragraphs related to ArticlePage

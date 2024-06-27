@@ -11,9 +11,9 @@ const NewCompareUpdatePage = ({page: wikipage, setDecodedTitle}) => {
     const {styles} = useStyleContext();
 
     useEffect(()=>{
-        if (wikipage && (wikipage.wikiPage || wikipage.userSubmittedWikiPage))  {
+        if (wikipage && (wikipage.articlePage))  {
             setActiveTab('wiki');
-            setPage(wikipage.wikiPage ?? wikipage.userSubmittedWikiPage);
+            setPage(wikipage.articlePage);
             setImages(wikipage.images)
         }
     },[wikipage])

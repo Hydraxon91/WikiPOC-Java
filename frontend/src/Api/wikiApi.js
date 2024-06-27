@@ -21,7 +21,7 @@ export const getWikiPageTitlesAndSlugs = async () => {
   };
 
 export const getWikiPageById = async (id) => {
-    const response = await fetch(`${BASE_URL}/api/WikiPages/GetById/${id}`);
+    const response = await fetch(`${BASE_URL}/api/article-pages/getbyid/${id}`);
     if (!response.ok) {
       throw new Error(`Failed to get WikiPage. Status: ${response.status}`);
     }
@@ -224,7 +224,7 @@ export const getLogo = async(pictureString) => {
 };
 
 export const getNewPageTitles = async (token) => {
-  const response = await fetch(`${BASE_URL}/api/WikiPages/GetSubmittedPageTitles`, {
+  const response = await fetch(`${BASE_URL}/api/article-pages/unapproved-new-page-titles`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -240,7 +240,7 @@ export const getNewPageTitles = async (token) => {
 
 
 export const getNewPageById = async (id, token) => {
-  const response = await fetch(`${BASE_URL}/api/WikiPages/GetSubmittedPageById/${id}`, {
+  const response = await fetch(`${BASE_URL}/api/api/article-pages/getbyid/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -257,7 +257,7 @@ export const getNewPageById = async (id, token) => {
 
 export const getUpdatePageTitles = async (token) => {
   // console.log(token);
-  const response = await fetch(`${BASE_URL}/api/WikiPages/GetSubmittedUpdates`, {
+  const response = await fetch(`${BASE_URL}/api/article-pages/unapproved-update-titles`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -268,12 +268,13 @@ export const getUpdatePageTitles = async (token) => {
     throw new Error(`Failed to get WikiPage Titles. Status: ${response.status}`);
   }
   const data = await response.json();
+  
   return data;
 };
 
 
 export const getUpdatePageById = async (id, token) => {
-  const response = await fetch(`${BASE_URL}/api/WikiPages/GetSubmittedUpdateById/${id}`, {
+  const response = await fetch(`${BASE_URL}/api/article-pages/getbyid/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -288,12 +289,12 @@ export const getUpdatePageById = async (id, token) => {
   return data;
 };
 
-export const acceptUserSubmittedUpdate = async (id, token) => {
+export const acceptUserSubmittedUpdate = async (id, originalId, token) => {
   try {
 
     console.log('Request Data:', id);
     
-    const response = await fetch(`${BASE_URL}/api/WikiPages/AdminAccept/${id}`, {
+    const response = await fetch(`${BASE_URL}/api/article-pages/accept-update/${originalId}/${id}`, {
       method: "PATCH",
       headers: {
         'Content-Type': 'application/json',

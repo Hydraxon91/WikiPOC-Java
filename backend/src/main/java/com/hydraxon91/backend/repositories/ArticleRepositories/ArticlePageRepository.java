@@ -18,6 +18,7 @@ public interface ArticlePageRepository extends JpaRepository<ArticlePage, UUID> 
     List<ArticlePage> findByCategoryId(UUID categoryId);
     long countByCategoryId(UUID categoryId);
     List<ArticlePage> findByApprovedIsTrue();
+    List<ArticlePage> findByArchivedIsFalseAndApprovedIsTrue();
     List<ArticlePage> findByApprovedIsFalseAndIsNewPageTrue();
     List<ArticlePage> findByApprovedIsFalseAndIsNewPageFalse();
     List<ArticlePageTitleAndIdProjection> findTitlesAndIdsByApprovedIsFalseAndIsNewPageTrue();

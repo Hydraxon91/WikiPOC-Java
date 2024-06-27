@@ -164,6 +164,25 @@ public class ArticlePageController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
+    @PatchMapping("/accept-update/{originalId}/{updateId}")
+    public ResponseEntity<?> acceptUserSubmittedUpdate(
+            @PathVariable UUID originalId,
+            @PathVariable UUID updateId) {
+        try {
+            boolean updated = articlePageService.acceptUserSubmittedUpdate(originalId, updateId);
+            if (updated) {
+                return ResponseEntity.ok().body("User-submitted update accepted successfully");
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to accept user-submitted update");
+        }
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteArticlePage(@PathVariable UUID id) {
         boolean deleted = articlePageService.deleteArticlePage(id);

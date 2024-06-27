@@ -19,7 +19,7 @@ public class UserSubmittedArticlePage extends ArticlePage{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parentArticleId", referencedColumnName = "id", foreignKey = @ForeignKey(name = "FK_user_submitted_article_page_article_page"), insertable = false, updatable = false)
     @JsonIgnore
-    private ArticlePage articlePage;
+    private ArticlePage parentArticlePage;
 
     private String submittedBy;
     private boolean approved = false;
@@ -34,12 +34,20 @@ public class UserSubmittedArticlePage extends ArticlePage{
 //        this.userSubmittedArticlePageId = userSubmittedArticlePageId;
 //    }
 
-    public ArticlePage getArticlePage() {
-        return articlePage;
+    public ArticlePage getParentArticlePage() {
+        return parentArticlePage;
     }
 
-    public void setArticlePage(ArticlePage articlePage) {
-        this.articlePage = articlePage;
+    public void setParentArticlePage(ArticlePage articlePage) {
+        this.parentArticlePage = articlePage;
+    }
+
+    public UUID getParentArticlePageId() {
+        return parentArticleId;
+    }
+
+    public void setParentArticleId(UUID id) {
+        this.parentArticleId = id;
     }
 
     public String getSubmittedBy() {
