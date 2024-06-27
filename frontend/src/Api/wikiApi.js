@@ -102,25 +102,25 @@ export const getWikiPageById = async (id) => {
 };
 
 export const updateWikiPage = async (updatedPage, token, decodedToken, images) => {
-  console.log(updatedPage);
     var role = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
     var userName = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
-    var url = role==="ADMIN"? `${BASE_URL}/api/WikiPages/admin/${updatedPage.id}` : `${BASE_URL}/api/WikiPages/userUpdate/${updatedPage.id}`;
+    var url = role==="ADMIN"? `${BASE_URL}/api/article-pages/update/${updatedPage.id}` : `${BASE_URL}/api/WikiPages/userUpdate/${updatedPage.id}`;
     const formData = new FormData();
     if (role !== "ADMIN") {
-      formData.append('wikiPageWithImagesInputModel.WikiPageId', updatedPage.id)
-      formData.append('wikiPageWithImagesInputModel.SubmittedBy', userName);
+      formData.append('parentArticlePageId', updatedPage.id)
+      formData.append('submittedBy', userName);
+      formData.append('approved', false)
+      formData.append('isNewPage', false);
     }
-    formData.append(`wikiPageWithImagesInputModel.Title`, updatedPage.title);
-    formData.append(`wikiPageWithImagesInputModel.CategoryId`, updatedPage.category);
-    formData.append(`wikiPageWithImagesInputModel.SiteSub`, updatedPage.siteSub);
-    formData.append(`wikiPageWithImagesInputModel.RoleNote`, updatedPage.roleNote);
-    formData.append(`wikiPageWithImagesInputModel.Content`, updatedPage.content);
-    formData.append(`model.Paragraphs`, updatedPage.paragraphs);
+    formData.append('title', updatedPage.title);
+    formData.append('categoryId', updatedPage.categoryId);
+    formData.append('siteSub', updatedPage.siteSub);
+    formData.append('roleNote', updatedPage.roleNote);
+    formData.append('content', updatedPage.content);
     // Append images to the FormData object
     images && images.forEach((image, index) => {
-      formData.append(`wikiPageWithImagesInputModel.Images[${index}].FileName`, image.name);
-      formData.append(`wikiPageWithImagesInputModel.Images[${index}].DataURL`, image.dataURL);
+      formData.append(`images[${index}].fileName`, image.name); // Adjust based on actual structure of ImageFormModel
+      formData.append(`images[${index}].dataURL`, image.dataURL); // Adjust based on actual structure of ImageFormModel
     });
     // console.log(`calling ${url} ${token}`);
     const response = await fetch(url, {
