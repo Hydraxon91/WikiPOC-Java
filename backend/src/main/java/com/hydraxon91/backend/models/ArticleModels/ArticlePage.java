@@ -36,6 +36,8 @@ public class ArticlePage {
     private LocalDateTime postDate;
     private LocalDateTime lastUpdateDate;
     private boolean legacyArticlePage = false;
+    private boolean approved;
+    private boolean isNewPage;
     
     @OneToMany(mappedBy = "articlePage", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Paragraph> paragraphs = new ArrayList<>();
@@ -147,5 +149,20 @@ public class ArticlePage {
     public void setComments(List<ArticleComment> comments) {
         this.comments = comments;
     }
-    
+
+    public boolean isApproved() {
+        return approved;
+    }
+
+    public void setApproved(boolean approved) {
+        this.approved = approved;
+    }
+
+    public boolean isNewPage() {
+        return isNewPage;
+    }
+
+    public void setNewPage(boolean newPage) {
+        isNewPage = newPage;
+    }
 }
