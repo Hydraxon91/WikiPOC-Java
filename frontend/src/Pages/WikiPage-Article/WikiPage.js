@@ -52,8 +52,7 @@ const WikiPage = ({page: wikipage, setDecodedTitle, cookies, disableNavbar = fal
             )}
             
             <div className="wiki-page-container">
-                {page && !page.legacyWikiPage ? 
-                (
+                { activeTab === 'wiki' ? (
                     <WikiPageComponent
                         page={page}
                         setDecodedTitle={setDecodedTitle}
@@ -61,20 +60,15 @@ const WikiPage = ({page: wikipage, setDecodedTitle, cookies, disableNavbar = fal
                         className={activeTab === 'wiki' ? 'wikipage-visible' : 'wikipage-hidden'}
                         images={images}
                     />
-                ) : (
-                    <LegacyWikiPageComponent
+                )
+                :
+                (
+                    <WikiPageCommentsComponent  
                         page={page}
-                        setDecodedTitle={setDecodedTitle}
+                        cookies={cookies}
                         activeTab={activeTab}
-                        className={activeTab === 'wiki' ? 'wikipage-visible' : 'wikipage-hidden'}
                     />
                 )}
-                
-                <WikiPageCommentsComponent
-                    page={page}
-                    cookies={cookies}
-                    activeTab={activeTab}
-                />
             </div>
         </div>
     )
