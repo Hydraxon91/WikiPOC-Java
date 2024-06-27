@@ -36,6 +36,21 @@ public class CommentController {
         return ResponseEntity.ok(comment.get());
     }
 
+    @PostMapping("/comment")
+    public ResponseEntity<?> postComment(@RequestBody Comment comment, Principal principal) {
+//        String userId = getUserIdFromPrincipal(principal);
+//        comment.getUserProfile().setId(UUID.fromString(userId));
+
+        try {
+            commentService.add(comment);
+            return ResponseEntity.ok().body("Comment posted successfully");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("An error occurred while posting the comment");
+        }
+    }
+
     @PutMapping("/comment/{id}")
     public ResponseEntity<?> editComment(@PathVariable UUID id, @RequestBody String updatedContent, Principal principal) {
         String userId = getUserIdFromPrincipal(principal);
