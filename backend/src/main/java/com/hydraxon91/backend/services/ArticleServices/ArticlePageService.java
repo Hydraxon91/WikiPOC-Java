@@ -8,10 +8,7 @@ import com.hydraxon91.backend.models.Forms.ImageFormModel;
 import com.hydraxon91.backend.models.Forms.WPWithImagesOutputModel;
 import com.hydraxon91.backend.repositories.ArticleRepositories.ArticlePageRepository;
 import com.hydraxon91.backend.repositories.ArticleRepositories.ParagraphRepository;
-import com.hydraxon91.backend.services.User.CommentService;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.PersistenceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +31,7 @@ public class ArticlePageService {
     private final ParagraphRepository paragraphRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(ArticlePageService.class);
-
-    @PersistenceContext
-    private EntityManager entityManager;
+    
 
     @Value("${pictures.path-container}")
     private String picturesPathContainer;
@@ -277,14 +272,24 @@ public class ArticlePageService {
         // Save the updated user-submitted article
         articlePageRepository.save(userSubmittedArticle);
 
-        // Flush changes to ensure they are persisted
-        entityManager.flush();
-        entityManager.clear();
-
         return true;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public boolean acceptUserSubmittedPage(UUID pageId) {
+        // Retrieve the user-submitted page
+        ArticlePage userSubmittedPage = articlePageRepository.findById(pageId)
+                .orElseThrow(() -> new EntityNotFoundException("User-submitted page not found with id: " + pageId));
 
+        // Set approved status to true
+        userSubmittedPage.setApproved(true);
+
+        // Save the updated user-submitted page
+        articlePageRepository.save(userSubmittedPage);
+
+        return true;
+    }
+    
     // Implement methods for handling paragraphs related to ArticlePage
     public List<Paragraph> getParagraphsByArticlePageId(UUID articlePageId) {
         // Implement method to fetch paragraphs by articlePageId

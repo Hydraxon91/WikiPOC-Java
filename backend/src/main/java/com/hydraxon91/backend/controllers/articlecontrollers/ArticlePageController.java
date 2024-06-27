@@ -183,6 +183,42 @@ public class ArticlePageController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
+    @PatchMapping("/accept-page/{pageId}")
+    public ResponseEntity<?> acceptUserSubmittedPage(
+            @PathVariable UUID pageId) {
+        try {
+            boolean updated = articlePageService.acceptUserSubmittedPage(pageId);
+            if (updated) {
+                return ResponseEntity.ok().body("User-submitted page accepted successfully");
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to accept user-submitted page");
+        }
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("/decline-page/{pageId}")
+    public ResponseEntity<?> declineUserSubmittedPage(
+            @PathVariable UUID pageId) {
+        try {
+            boolean deleted = articlePageService.deleteArticlePage(pageId);
+            if (deleted) {
+                return ResponseEntity.ok().body("User-submitted page declined and deleted successfully");
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to decline user-submitted page");
+        }
+    }
+    
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteArticlePage(@PathVariable UUID id) {
         boolean deleted = articlePageService.deleteArticlePage(id);

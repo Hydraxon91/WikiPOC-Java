@@ -29,14 +29,14 @@ const CheckUserSubmittedPage = () => {
       };
 
       const handleAccept = () => {
-        acceptUserSubmittedPage(page, cookies["jwt_token"])
+        acceptUserSubmittedPage(page.articlePage.id, cookies["jwt_token"])
           .then(() => {
             // setWikiPageTitles(wikiPageTitles.filter((page) => page !== currentWikiPage.Title));
             alert("Succesfully Approved Submitted Page");
             navigate(`/user-submissions`);
           })
           .catch((error) => {
-            console.error("Error updating WikiPage:", error);
+            console.error("Error accepting WikiPage:", error);
           });
       };
 
