@@ -10,6 +10,16 @@ const WikiPageCommentsComponent = ({ page, cookies, activeTab }) => {
     const [currPage, setCurrPage] = useState(page);
     const [showRepliesIndex, setShowRepliesIndex] = useState({});
 
+    const [sortedComments, setSortedComments] = useState([]);
+
+    useEffect(() => {
+        if (currPage?.comments) {
+            // Sort comments by postDate in ascending order (oldest first)
+            const sorted = [...page.comments].sort((a, b) => new Date(a.postDate) - new Date(b.postDate));
+            setSortedComments(sorted);
+        }
+    }, [currPage]);
+
     useEffect(() => {
         const decodedTokenName = decodedTokenContext?.["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
         if (decodedTokenName) {
@@ -42,7 +52,7 @@ const WikiPageCommentsComponent = ({ page, cookies, activeTab }) => {
                 <div>
                     <h3>Comments</h3>
                     {user && <WikiPageSubmitCommentComponent user={user} page={currPage} cookies={cookies} handleCommentSubmit={handleCommentSubmit} postComment={postComment} />}
-                    {currPage.comments.map((comment, index) => (
+                    {sortedComments.map((comment, index) => (
                         !comment.replyToCommentId && <UserCommentComponent
                             key={comment.id}
                             comment={comment}
