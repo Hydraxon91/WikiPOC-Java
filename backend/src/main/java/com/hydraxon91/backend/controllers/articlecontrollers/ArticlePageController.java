@@ -194,12 +194,12 @@ public class ArticlePageController {
                 logger.error("ArticlePage not found for id: {}", id);
                 return ResponseEntity.status(404).body("ArticlePage not found");
             }
-            logger.debug("ArticlePage found: {}", wpWithImagesOutputModel.getArticlePage());
+            logger.info("ArticlePage found: {}", wpWithImagesOutputModel.getArticlePage());
 
             // comment.getUserProfile().setId(UUID.fromString(userId));
             comment.setArticlePage(wpWithImagesOutputModel.getArticlePage());
             
-            logger.debug("Comment before saving: {}", comment);
+            logger.info("Comment before saving: {}", comment.getReplyToCommentId());
             
             commentService.addArticleComment(comment);
             

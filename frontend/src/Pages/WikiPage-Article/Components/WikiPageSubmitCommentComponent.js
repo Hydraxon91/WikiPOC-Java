@@ -20,8 +20,9 @@ const WikiPageSubmitCommentComponent = ({ user, page, cookies, handleCommentSubm
             isEdited: false,
         };
 
+        // console.log(user);
         try {
-            console.log(newComment);
+            // console.log(newComment);
             await postComment(newComment, cookies, user);
             setCommentText('');
             newComment.userProfile = user;

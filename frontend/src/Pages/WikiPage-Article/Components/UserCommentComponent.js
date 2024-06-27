@@ -43,6 +43,7 @@ const UserCommentComponent = ({ comment, user, cookies, handleCommentSubmit, pos
                     </a>
                     {" | "}
                     <span>{formatDate(comment.postDate)}</span>
+                    <a href="#"> edit</a>
                 </div>
                 <div className='wikipage-comment-text'>
                     {editingCommentIndex === index ? (

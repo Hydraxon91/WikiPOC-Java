@@ -10,6 +10,7 @@ export const getUserProfileByUsername = async (username, setUser) => {
   };
 
   export const postComment = async (comment, token) => {
+    console.log(comment);
     const response = await fetch(`${BASE_URL}/api/article-pages/${comment.wikiPageId}/comment`, {
         method: 'POST',
         headers: {
