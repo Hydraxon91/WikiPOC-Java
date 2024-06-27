@@ -10,8 +10,7 @@ export const getUserProfileByUsername = async (username, setUser) => {
   };
 
   export const postComment = async (comment, token) => {
-    console.log(comment);
-    const response = await fetch(`${BASE_URL}/api/UserComment/comment/`, {
+    const response = await fetch(`${BASE_URL}/api/article-pages/${comment.wikiPageId}/comment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -19,18 +18,27 @@ export const getUserProfileByUsername = async (username, setUser) => {
         },
         body: JSON.stringify(comment),
       });
-
       if (!response.ok) {
         // Handle the error, you can throw an exception or return an error object
-        throw new Error(`Failed to delete WikiPage. Status: ${response.status}`);
+        throw new Error(`Failed to post comment. Status: ${response.status}`);
       }
 
-      const data = await response.json();
-      return data;
+      const contentType = response.headers.get('Content-Type');
+      let responseData;
+
+      if (contentType && contentType.includes('application/json')) {
+          responseData = await response.json(); // Parse JSON response
+      } else {
+          responseData = await response.text(); // Read plain text response
+      }
+
+      console.log('Response:', responseData); // Log the response data
+
+      return responseData;
   };
 
   export const postEditedComment = async (commentId, editedComment, token) => {
-    const response = await fetch(`${BASE_URL}/api/UserComment/comment/${commentId}`, {
+    const response = await fetch(`${BASE_URL}/api/user-comments/comment/${commentId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
