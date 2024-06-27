@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useStyleContext } from '../../Components/contexts/StyleContext';
+import { fetchPagesByCategory } from '../../Api/wikiApi';
 
 const CategoryPageComponent = ({ pages, categories }) => {
   const { category } = useParams(); // Extract category from URL
@@ -8,20 +9,14 @@ const CategoryPageComponent = ({ pages, categories }) => {
   const [pagesInCurrentCategory, setPagesInCurrentCategory] = useState([])
   const {styles} = useStyleContext()
 ;
-  useEffect(() => {
-    // Organize pages by category
-    console.log(categories);
-    console.log(pages);
-    const pagesByCategory = {};
-    pages.forEach(page => {
-      const category = categories.includes(page.category) ? page.category : 'Uncategorized'; // Check if page category exists in categories
-      if (!pagesByCategory[category]) {
-        pagesByCategory[category] = [];
-      }
-      pagesByCategory[category].push(page);
-    });
-    setPagesByCategory(pagesByCategory);
-  }, [pages, categories]);
+useEffect(() => {
+    const fetchPages = async () => {
+      const pages = await fetchPagesByCategory(category);
+    setPagesInCurrentCategory(pages);
+  };
+
+  fetchPages();
+}, [category]);
   
 
   useEffect(()=>{

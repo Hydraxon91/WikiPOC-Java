@@ -11,6 +11,7 @@ const HomeComponent = ({ categories }) => {
     const loadPagesByCategory = async () => {
       if (categories) {
         const pagesByCategory = await fetchPagesForAllCategories(categories);
+        console.log(pagesByCategory);
         setPagesByCategory(pagesByCategory);
       }
     };

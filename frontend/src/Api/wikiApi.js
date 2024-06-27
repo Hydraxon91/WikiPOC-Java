@@ -369,7 +369,7 @@ export const fetchPagesForAllCategories = async (categories) => {
   const pagesByCategory = {};
   // Fetch pages for each category
   await Promise.all(categories.map(async (category) => {
-    const response = await fetch(`${BASE_URL}/api/categories/${category.id}/articlePages`);
+    const response = await fetch(`${BASE_URL}/api/categories/${category.slug}/approvedNotArchivedArticlePages`);
     const pages = await response.json();
     pagesByCategory[category.categoryName] = pages;
   }));
@@ -379,10 +379,9 @@ export const fetchPagesForAllCategories = async (categories) => {
 export const fetchPagesByCategory = async (category) => {
   const pagesByCategory = {};
   // Fetch pages for each category
-  const response = await fetch(`${BASE_URL}/api/categories/${category}/articlePages`);
+  const response = await fetch(`${BASE_URL}/api/categories/${category}/approvedNotArchivedArticlePages`);
   const pages = await response.json(); 
-  pagesByCategory[category] = pages;
-  return pagesByCategory;
+  return pages;
 }
 
 export const fetchPagesCountByCategory = async (categoryId) => {
