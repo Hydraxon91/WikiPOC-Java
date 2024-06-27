@@ -1,5 +1,6 @@
 package com.hydraxon91.backend.services.User;
 
+import com.hydraxon91.backend.models.ArticleModels.ArticleComment;
 import com.hydraxon91.backend.models.UserModels.Comment;
 import com.hydraxon91.backend.repositories.UserRepository.UserCommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,17 @@ public class CommentService {
             userCommentRepository.save(parentComment);
         } else {
             userCommentRepository.save(comment);
+        }
+    }
+
+    public void addArticleComment(ArticleComment articleComment) {
+        if (articleComment.getReplyToCommentId() != null) {
+            Comment parentComment = userCommentRepository.findById(articleComment.getReplyToCommentId())
+                    .orElseThrow(() -> new EntityNotFoundException("Parent comment not found"));
+            parentComment.getReplies().add(articleComment);
+            userCommentRepository.save(parentComment);
+        } else {
+            userCommentRepository.save(articleComment);
         }
     }
 
