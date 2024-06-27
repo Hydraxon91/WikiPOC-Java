@@ -32,7 +32,7 @@ public class ArticlePageService {
     }
 
     public List<ArticlePage> getAllArticlePages() {
-        return articlePageRepository.findAll();
+        return articlePageRepository.findByApprovedIsTrueOrApprovedIsNull();
     }
 
     public ArticlePage getArticlePageById(UUID id) {

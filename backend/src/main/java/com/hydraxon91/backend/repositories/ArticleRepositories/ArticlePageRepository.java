@@ -16,6 +16,7 @@ public interface ArticlePageRepository extends JpaRepository<ArticlePage, UUID> 
     Optional<ArticlePage> findBySlug(String slug);
     List<ArticlePage> findByCategoryId(UUID categoryId);
     long countByCategoryId(UUID categoryId);
+    List<ArticlePage> findByApprovedIsTrueOrApprovedIsNull();
     
     @Query("SELECT ap.title AS title, ap.slug AS slug FROM ArticlePage ap")
     List<ArticlePageProjection> findArticleTitlesAndSlugs();
