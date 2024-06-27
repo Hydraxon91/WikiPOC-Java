@@ -1,25 +1,30 @@
 package com.hydraxon91.backend.controllers.articlecontrollers;
 
+import com.hydraxon91.backend.models.ArticleModels.ArticleComment;
 import com.hydraxon91.backend.models.ArticleModels.ArticlePage;
 import com.hydraxon91.backend.models.ArticleModels.ArticlePageTitleAndIdProjection;
 import com.hydraxon91.backend.models.ArticleModels.Paragraph;
 import com.hydraxon91.backend.models.Forms.ArticlePageWithImagesInputModel;
 import com.hydraxon91.backend.models.Forms.ImageFormModel;
 import com.hydraxon91.backend.models.Forms.WPWithImagesOutputModel;
+import com.hydraxon91.backend.models.UserModels.ApplicationUser;
 import com.hydraxon91.backend.services.ArticleServices.ArticlePageProjection;
 import com.hydraxon91.backend.services.ArticleServices.ArticlePageService;
+import com.hydraxon91.backend.services.Authentication.TokenService;
+import com.hydraxon91.backend.services.User.CommentService;
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -29,10 +34,16 @@ public class ArticlePageController {
     private static final Logger logger = LoggerFactory.getLogger(ArticlePageController.class);
 
     private final ArticlePageService articlePageService;
+    
+    private final CommentService commentService;
+
+    private final TokenService tokenService;
 
     @Autowired
-    public ArticlePageController(ArticlePageService articlePageService) {
+    public ArticlePageController(ArticlePageService articlePageService, CommentService commentService, TokenService tokenService) {
         this.articlePageService = articlePageService;
+        this.commentService = commentService;
+        this.tokenService = tokenService;
     }
 
     @GetMapping
@@ -167,4 +178,82 @@ public class ArticlePageController {
         List<Paragraph> paragraphs = articlePageService.getParagraphsByArticlePageId(id);
         return ResponseEntity.ok(paragraphs);
     }
+    
+    // Comments
+
+    @PostMapping("{id}/comment")
+    public ResponseEntity<?> postComment(@PathVariable UUID id, @RequestBody ArticleComment comment, @AuthenticationPrincipal UserDetails userDetails) {
+        ApplicationUser currentUser = (ApplicationUser) userDetails;
+        String userId = currentUser.getId().toString();
+
+        logger.debug("Posting comment by user: {}", userId);
+
+        try {
+            WPWithImagesOutputModel wpWithImagesOutputModel = articlePageService.getArticlePageById(id);
+            if (wpWithImagesOutputModel.getArticlePage() == null) {
+                logger.error("ArticlePage not found for id: {}", id);
+                return ResponseEntity.status(404).body("ArticlePage not found");
+            }
+            logger.debug("ArticlePage found: {}", wpWithImagesOutputModel.getArticlePage());
+
+            // comment.getUserProfile().setId(UUID.fromString(userId));
+            comment.setArticlePage(wpWithImagesOutputModel.getArticlePage());
+            
+            logger.debug("Comment before saving: {}", comment);
+            
+            commentService.addArticleComment(comment);
+            
+            logger.debug("Comment posted successfully");
+            
+            return ResponseEntity.ok().body("Comment posted successfully");
+        } catch (EntityNotFoundException e) {
+            logger.error("EntityNotFoundException: {}", e.getMessage());
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (IOException e) {
+            logger.error("IOException: {}", e.getMessage());
+            return ResponseEntity.status(500).body(e.getMessage());
+        } catch (Exception e) {
+            logger.error("Exception while posting the comment", e);
+            return ResponseEntity.status(500).body("An error occurred while posting the comment");
+        }
+    }
+
+    @PutMapping("{id}/comment/{commentId}")
+    public ResponseEntity<?> editComment(@PathVariable UUID id, @PathVariable UUID commentId, @RequestBody String updatedContent, @AuthenticationPrincipal UserDetails userDetails) {
+        ApplicationUser currentUser = (ApplicationUser) userDetails;
+        String userId = currentUser.getId().toString();
+        String role = tokenService.extractRole(userDetails.getUsername());
+
+        ArticleComment existingComment = (ArticleComment) commentService.getById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
+
+        if (isAuthorizedToEditOrDeleteComment(userId, role, existingComment)) {
+            commentService.update(commentId, updatedContent);
+            return ResponseEntity.ok().body("Comment edited successfully");
+        }
+
+        return ResponseEntity.status(401).body("Unauthorized to update this comment");
+    }
+
+    @DeleteMapping("{id}/comment/{commentId}")
+    public ResponseEntity<?> deleteComment(@PathVariable UUID id, @PathVariable UUID commentId, @AuthenticationPrincipal UserDetails userDetails) {
+        ApplicationUser currentUser = (ApplicationUser) userDetails;
+        String userId = currentUser.getId().toString();
+        String role = tokenService.extractRole(userDetails.getUsername());
+
+        ArticleComment existingComment = (ArticleComment) commentService.getById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
+
+        if (isAuthorizedToEditOrDeleteComment(userId, role, existingComment)) {
+            commentService.delete(commentId);
+            return ResponseEntity.ok().body("Comment deleted successfully");
+        }
+
+        return ResponseEntity.status(401).body("Unauthorized to delete this comment");
+    }
+    
+    private boolean isAuthorizedToEditOrDeleteComment(String userId, String role, ArticleComment comment) {
+        return userId.equals(comment.getUserProfile().getId().toString()) || role.equals("ADMIN");
+    }
+    
 }
