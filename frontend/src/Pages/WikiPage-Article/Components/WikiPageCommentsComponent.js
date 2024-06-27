@@ -9,16 +9,16 @@ const WikiPageCommentsComponent = ({ page, cookies, activeTab }) => {
     const [user, setUser] = useState();
     const [currPage, setCurrPage] = useState(page);
     const [showRepliesIndex, setShowRepliesIndex] = useState({});
-
+    const [comments, setComments] = useState([]);
     const [sortedComments, setSortedComments] = useState([]);
 
     useEffect(() => {
-        if (currPage?.comments) {
+        if (comments) {
             // Sort comments by postDate in ascending order (oldest first)
-            const sorted = [...page.comments].sort((a, b) => new Date(a.postDate) - new Date(b.postDate));
+            const sorted = [...comments].sort((a, b) => new Date(a.postDate) - new Date(b.postDate));
             setSortedComments(sorted);
         }
-    }, [currPage]);
+    }, [comments]);
 
     useEffect(() => {
         const decodedTokenName = decodedTokenContext?.["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
@@ -29,14 +29,18 @@ const WikiPageCommentsComponent = ({ page, cookies, activeTab }) => {
 
     useEffect(() => {
         setCurrPage(page);
+        setComments(currPage.comments)
     }, [page]);
 
     const handleCommentSubmit = (newComment) => {
         // Logic for handling new comment submission goes here
+        console.log("handlecommentsubmit");
+        console.log(currPage);
         setCurrPage((currPage) => ({
             ...currPage,
             comments: [...currPage.comments, newComment],
         }));
+        setComments([...comments, newComment])
     };
 
     const toggleRepliesIndex = (index) => {
